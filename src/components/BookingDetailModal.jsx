@@ -20,14 +20,16 @@ export default function BookingDetailModal({ booking, onClose }) {
     return () => window.removeEventListener('keydown', handler)
   }, [booking, onClose])
 
-  // Prevent body scroll when modal is open
+  // Prevent body scroll when modal is open — save/restore original overflow
+  const prevOverflowRef = useRef('')
   useEffect(() => {
     if (booking) {
+      prevOverflowRef.current = document.body.style.overflow
       document.body.style.overflow = 'hidden'
     } else {
-      document.body.style.overflow = ''
+      document.body.style.overflow = prevOverflowRef.current || ''
     }
-    return () => { document.body.style.overflow = '' }
+    return () => { document.body.style.overflow = prevOverflowRef.current || '' }
   }, [booking])
 
   if (!booking) return null

@@ -1683,3 +1683,223 @@ tbody tr:hover td {
     height: 180px;
   }
 }
+
+/* ═══════════════════════════════════════════════════════
+   LocationInput — Smart Location Selector
+   ═══════════════════════════════════════════════════════ */
+
+.loc-input-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.loc-input-row {
+  display: flex;
+  gap: 0.4rem;
+  align-items: stretch;
+}
+
+.loc-input-field-wrap {
+  position: relative;
+  flex: 1;
+}
+
+.loc-input-field {
+  padding-right: 2.5rem !important;
+}
+
+.loc-input-clear {
+  position: absolute;
+  right: 0.65rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: var(--surface-3);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+
+.loc-input-clear:hover {
+  background: var(--danger);
+  color: white;
+}
+
+.loc-input-loading {
+  position: absolute;
+  right: 0.65rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+.loc-input-btn {
+  flex-shrink: 0;
+  width: 42px;
+  height: auto;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+/* ── Dropdown ── */
+
+.loc-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  margin-top: 0.35rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  max-height: 280px;
+  overflow-y: auto;
+  animation: locDropIn 0.15s ease;
+}
+
+@keyframes locDropIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.loc-dropdown-header {
+  padding: 0.55rem 0.85rem 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--border);
+}
+
+.loc-dropdown-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.6rem 0.85rem;
+  background: none;
+  border: none;
+  color: var(--text);
+  font-size: 0.88rem;
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--transition);
+}
+
+.loc-dropdown-item:hover {
+  background: var(--surface-2);
+}
+
+.loc-dropdown-item + .loc-dropdown-item {
+  border-top: 1px solid var(--border);
+}
+
+.loc-dropdown-icon {
+  font-size: 1rem;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.loc-dropdown-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.loc-dropdown-name {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.loc-dropdown-area {
+  font-size: 0.75rem;
+  color: var(--text-faint);
+}
+
+.loc-dropdown-empty {
+  padding: 1rem;
+  text-align: center;
+  color: var(--text-faint);
+  font-size: 0.85rem;
+}
+
+/* ── Map Picker Modal ── */
+
+.loc-map-modal {
+  max-width: 700px;
+}
+
+.loc-map-container {
+  height: 350px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.loc-map-address-bar {
+  padding: 0.75rem 1.5rem;
+  font-size: 0.85rem;
+  color: var(--text);
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.loc-map-address-text {
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.loc-map-bounds-error {
+  padding: 0.6rem 1.5rem;
+  font-size: 0.82rem;
+  color: var(--danger);
+  background: rgba(239, 68, 68, 0.08);
+  border-bottom: 1px solid rgba(239, 68, 68, 0.15);
+  animation: locDropIn 0.15s ease;
+}
+
+/* ── Swap Button ── */
+
+.loc-swap-btn {
+  align-self: center;
+  width: 36px;
+  height: 36px;
+  padding: 0 !important;
+  border-radius: var(--radius-full) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+@media (max-width: 600px) {
+  .loc-map-container {
+    height: 260px;
+  }
+
+  .loc-input-btn {
+    width: 38px;
+    font-size: 1rem;
+  }
+}

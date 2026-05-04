@@ -2,7 +2,7 @@ import { useState, useCallback, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { bookingsAPI } from '../api/axios'
 import Navbar from '../components/Navbar'
-import LocationPicker from '../components/LocationPicker'
+import LocationInput from '../components/LocationInput'
 
 const TRIP_TYPES = [
   { value: 'airport_pickup', label: '✈️ Airport Pickup' },
@@ -11,7 +11,22 @@ const TRIP_TYPES = [
   { value: 'taxi_booking', label: '🚕 Taxi Booking' },
 ]
 
-const TODAY = new Date().toISOString().split('T')[0]
+// ── Date/time helpers (computed fresh to avoid stale values if page stays open) ──
+const getToday = () => new Date().toISOString().split('T')[0]
+
+const getMaxDate = () => {
+  const d = new Date()
+  d.setMonth(d.getMonth() + 6)
+  return d.toISOString().split('T')[0]
+}
+
+// Returns current time as HH:MM string (rounded up to next minute for min-time UX)
+const getCurrentTime = () => {
+  const now = new Date()
+  // Round up: if seconds > 0, bump minute by 1 so the user can't pick "right now"
+  if (now.getSeconds() > 0) now.setMinutes(now.getMinutes() + 1)
+  return now.toTimeString().slice(0, 5) // "HH:MM"
+}
 
 const initialForm = (tripType = '') => ({
   trip_type: tripType,
@@ -47,40 +62,55 @@ export default function BookingFormPage() {
   // Ref-based guard: prevents duplicate API calls even if React state batching is slow
   const isSubmittingRef = useRef(false)
 
-  // ── Map data (kept in sync with form via callbacks) ──
-  const [pickupCoords, setPickupCoords] = useState(null)
-  const [dropCoords, setDropCoords] = useState(null)
-
-  const handlePickupChange = useCallback(({ lat, lng, address }) => {
-    setPickupCoords({ lat, lng })
+  // ── Location change handlers (unified from LocationInput) ──
+  const handlePickupChange = useCallback(({ address, latitude, longitude }) => {
     setForm((prev) => ({
       ...prev,
-      pickup_lat: lat,
-      pickup_lng: lng,
+      from_location: address,
       pickup_address: address,
-      from_location: address, // Auto-fill the text field from the map
+      pickup_lat: latitude,
+      pickup_lng: longitude,
     }))
-    setErrors((prev) => ({ ...prev, from_location: '', pickup_lat: '' }))
+    setErrors((prev) => ({ ...prev, from_location: '' }))
     setApiError('')
     setSuccess('')
   }, [])
 
-  const handleDropChange = useCallback(({ lat, lng, address }) => {
-    setDropCoords({ lat, lng })
+  const handleDropChange = useCallback(({ address, latitude, longitude }) => {
     setForm((prev) => ({
       ...prev,
-      drop_lat: lat,
-      drop_lng: lng,
+      to_location: address,
       drop_address: address,
-      to_location: address, // Auto-fill the text field from the map
+      drop_lat: latitude,
+      drop_lng: longitude,
     }))
-    setErrors((prev) => ({ ...prev, to_location: '', drop_lat: '' }))
+    setErrors((prev) => ({ ...prev, to_location: '' }))
     setApiError('')
     setSuccess('')
   }, [])
+
+  // ── Swap pickup ↔ drop ──
+  const handleSwapLocations = () => {
+    setForm((prev) => ({
+      ...prev,
+      from_location: prev.to_location,
+      to_location: prev.from_location,
+      pickup_address: prev.drop_address,
+      drop_address: prev.pickup_address,
+      pickup_lat: prev.drop_lat,
+      pickup_lng: prev.drop_lng,
+      drop_lat: prev.pickup_lat,
+      drop_lng: prev.pickup_lng,
+    }))
+    setErrors((prev) => ({ ...prev, from_location: '', to_location: '' }))
+  }
 
   const validate = () => {
     const errs = {}
+    const today = getToday()
+    const maxDate = getMaxDate()
+    const currentTime = getCurrentTime()
+
     if (!form.trip_type) errs.trip_type = 'Please select a trip type.'
     if (!form.name.trim()) errs.name = 'Passenger name is required.'
 
@@ -103,10 +133,21 @@ export default function BookingFormPage() {
     else if (form.from_location.trim().toLowerCase() === form.to_location.trim().toLowerCase())
       errs.to_location = 'Pickup and drop locations cannot be the same.'
 
-    if (!form.date) errs.date = 'Travel date is required.'
-    else if (form.date < TODAY) errs.date = 'Date cannot be in the past.'
+    // ── Date validation ──
+    if (!form.date) {
+      errs.date = 'Travel date is required.'
+    } else if (form.date < today) {
+      errs.date = 'Cannot select a past date.'
+    } else if (form.date > maxDate) {
+      errs.date = 'Booking allowed only within the next 6 months.'
+    }
 
-    if (!form.time) errs.time = 'Pickup time is required.'
+    // ── Time validation ──
+    if (!form.time) {
+      errs.time = 'Pickup time is required.'
+    } else if (form.date === today && form.time < currentTime) {
+      errs.time = 'Cannot select a past time. Please pick a later time.'
+    }
 
     return errs
   }
@@ -114,7 +155,15 @@ export default function BookingFormPage() {
   const handleChange = (e) => {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }))
+
+    // Clear current field error
+    const clearedErrors = { [name]: '' }
+
+    // Cross-clear: changing date may make a previously-invalid time valid (and vice versa)
+    if (name === 'date' && errors.time) clearedErrors.time = ''
+    if (name === 'time' && errors.date) clearedErrors.date = ''
+
+    setErrors((prev) => ({ ...prev, ...clearedErrors }))
     setApiError('')
     setSuccess('')
   }
@@ -160,8 +209,6 @@ export default function BookingFormPage() {
       setSuccess('Booking submitted! We will review and confirm shortly.')
       setSubmitted(true)
       setForm(initialForm())
-      setPickupCoords(null)
-      setDropCoords(null)
       setErrors({})
       // Auto-redirect after 2.5 s
       setTimeout(() => navigate('/my-bookings'), 2500)
@@ -204,7 +251,7 @@ export default function BookingFormPage() {
         <div style={{ maxWidth: '720px', margin: '0 auto' }}>
           <div className="mb-2">
             <h1 className="page-title">Book a Cab</h1>
-            <p className="page-subtitle">Select your locations on the map, then fill in the details.</p>
+            <p className="page-subtitle">Select your locations, then fill in the details.</p>
           </div>
 
           {apiError && (
@@ -238,19 +285,42 @@ export default function BookingFormPage() {
               {errors.trip_type && <span className="form-error">{errors.trip_type}</span>}
             </div>
 
-            {/* ── Map Location Picker ── */}
+            {/* ── Location Inputs with Swap ── */}
             <div className="mb-2">
-              <label className="form-label" style={{ marginBottom: '0.5rem', display: 'block' }}>
-                📍 Select Locations on Map
-              </label>
-              <LocationPicker
-                pickupCoords={pickupCoords}
-                dropCoords={dropCoords}
-                pickupAddress={form.pickup_address}
-                dropAddress={form.drop_address}
-                onPickupChange={handlePickupChange}
-                onDropChange={handleDropChange}
-              />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <LocationInput
+                  id="pickup-location"
+                  label="📍 Pickup Location"
+                  placeholder="Search or pick a pickup location…"
+                  value={form.from_location}
+                  coords={form.pickup_lat != null ? { lat: form.pickup_lat, lng: form.pickup_lng } : null}
+                  error={errors.from_location}
+                  onChange={handlePickupChange}
+                />
+
+                {/* Swap button */}
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <button
+                    type="button"
+                    className="btn btn-ghost loc-swap-btn"
+                    onClick={handleSwapLocations}
+                    title="Swap pickup and drop"
+                    disabled={!form.from_location && !form.to_location}
+                  >
+                    ⇅
+                  </button>
+                </div>
+
+                <LocationInput
+                  id="drop-location"
+                  label="🏁 Drop Location"
+                  placeholder="Search or pick a drop location…"
+                  value={form.to_location}
+                  coords={form.drop_lat != null ? { lat: form.drop_lat, lng: form.drop_lng } : null}
+                  error={errors.to_location}
+                  onChange={handleDropChange}
+                />
+              </div>
             </div>
 
             {/* Passenger Name & Phone Number */}
@@ -300,50 +370,6 @@ export default function BookingFormPage() {
               {errors.num_people && <span className="form-error">{errors.num_people}</span>}
             </div>
 
-            {/* From & To — manual text input (auto-filled by map or typed manually) */}
-            <div className="form-grid mb-2">
-              <div className="form-group">
-                <label className="form-label" htmlFor="from-location">
-                  Pickup Location
-                  {form.pickup_lat && (
-                    <span style={{ color: 'var(--success)', fontWeight: 400, textTransform: 'none', marginLeft: '0.35rem' }}>
-                      ✓ Map selected
-                    </span>
-                  )}
-                </label>
-                <input
-                  id="from-location"
-                  type="text"
-                  name="from_location"
-                  className="form-control"
-                  placeholder="e.g. Cochin Airport"
-                  value={form.from_location}
-                  onChange={handleChange}
-                />
-                {errors.from_location && <span className="form-error">{errors.from_location}</span>}
-              </div>
-              <div className="form-group">
-                <label className="form-label" htmlFor="to-location">
-                  Drop Location
-                  {form.drop_lat && (
-                    <span style={{ color: 'var(--success)', fontWeight: 400, textTransform: 'none', marginLeft: '0.35rem' }}>
-                      ✓ Map selected
-                    </span>
-                  )}
-                </label>
-                <input
-                  id="to-location"
-                  type="text"
-                  name="to_location"
-                  className="form-control"
-                  placeholder="e.g. Marine Drive, Kochi"
-                  value={form.to_location}
-                  onChange={handleChange}
-                />
-                {errors.to_location && <span className="form-error">{errors.to_location}</span>}
-              </div>
-            </div>
-
             {/* Date & Time */}
             <div className="form-grid mb-2">
               <div className="form-group">
@@ -353,7 +379,8 @@ export default function BookingFormPage() {
                   type="date"
                   name="date"
                   className="form-control"
-                  min={TODAY}
+                  min={getToday()}
+                  max={getMaxDate()}
                   value={form.date}
                   onChange={handleChange}
                 />
@@ -366,6 +393,7 @@ export default function BookingFormPage() {
                   type="time"
                   name="time"
                   className="form-control"
+                  min={form.date === getToday() ? getCurrentTime() : undefined}
                   value={form.time}
                   onChange={handleChange}
                 />

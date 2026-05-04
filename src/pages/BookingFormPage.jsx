@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { bookingsAPI } from '../api/axios'
 import Navbar from '../components/Navbar'
@@ -42,6 +42,10 @@ export default function BookingFormPage() {
   const [apiError, setApiError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+
+  // Ref-based guard: prevents duplicate API calls even if React state batching is slow
+  const isSubmittingRef = useRef(false)
 
   // ── Map data (kept in sync with form via callbacks) ──
   const [pickupCoords, setPickupCoords] = useState(null)
@@ -117,13 +121,19 @@ export default function BookingFormPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+
+    // Guard: block if already submitting (ref is synchronous, immune to batching)
+    if (isSubmittingRef.current) return
+
     const errs = validate()
     if (Object.keys(errs).length) {
       setErrors(errs)
       return
     }
 
+    isSubmittingRef.current = true
     setLoading(true)
+    setSubmitted(false)
     setApiError('')
     setSuccess('')
 
@@ -148,6 +158,7 @@ export default function BookingFormPage() {
       }
       await bookingsAPI.create(payload)
       setSuccess('Booking submitted! We will review and confirm shortly.')
+      setSubmitted(true)
       setForm(initialForm())
       setPickupCoords(null)
       setDropCoords(null)
@@ -179,6 +190,8 @@ export default function BookingFormPage() {
       } else {
         setApiError('Booking failed. Please try again.')
       }
+      // Error path: release the guard so user can retry
+      isSubmittingRef.current = false
     } finally {
       setLoading(false)
     }
@@ -382,12 +395,15 @@ export default function BookingFormPage() {
               id="booking-submit-btn"
               type="submit"
               className="btn btn-primary btn-full btn-lg"
-              disabled={loading}
+              disabled={loading || submitted}
+              style={submitted ? { background: 'var(--success)', borderColor: 'var(--success)' } : undefined}
             >
               {loading ? (
                 <>
-                  <span className="spinner spinner-sm" /> Submitting…
+                  <span className="spinner spinner-sm" /> Booking…
                 </>
+              ) : submitted ? (
+                '✅ Booked! Redirecting…'
               ) : (
                 '📨 Submit Booking'
               )}

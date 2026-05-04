@@ -3,6 +3,8 @@ import { adminAPI } from '../api/axios'
 import Navbar from '../components/Navbar'
 import StatusBadge from '../components/StatusBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
+import BookingCard from '../components/BookingCard'
+import BookingDetailModal from '../components/BookingDetailModal'
 
 // ── Sub-components ──────────────────────────────────────────
 
@@ -43,13 +45,14 @@ function StatsBar({ bookings, users }) {
   )
 }
 
-// ── Bookings Tab ──────────────────────────────────────────
+// ── Bookings Tab (Card-based) ──────────────────────────────────
 
 function BookingsTab({ bookings, loading, onStatusChange, onRefresh }) {
   const [statusFilter, setStatusFilter] = useState('')
   const [tripFilter, setTripFilter] = useState('')
   const [search, setSearch] = useState('')
-  const [actionLoading, setActionLoading] = useState(null) // booking id being acted on
+  const [actionLoading, setActionLoading] = useState(null)
+  const [selectedBooking, setSelectedBooking] = useState(null) // for modal
 
   const filtered = bookings.filter((b) => {
     const matchStatus = !statusFilter || b.status === statusFilter
@@ -59,7 +62,8 @@ function BookingsTab({ bookings, loading, onStatusChange, onRefresh }) {
       b.name.toLowerCase().includes(search.toLowerCase()) ||
       b.user_info?.email.toLowerCase().includes(search.toLowerCase()) ||
       b.from_location.toLowerCase().includes(search.toLowerCase()) ||
-      b.to_location.toLowerCase().includes(search.toLowerCase())
+      b.to_location.toLowerCase().includes(search.toLowerCase()) ||
+      (b.phone_number || '').includes(search)
     return matchStatus && matchTrip && matchSearch
   })
 
@@ -78,19 +82,6 @@ function BookingsTab({ bookings, loading, onStatusChange, onRefresh }) {
     }
   }
 
-  const formatDate = (d) =>
-    new Date(d).toLocaleDateString('en-IN', {
-      day: 'numeric', month: 'short', year: 'numeric',
-    })
-
-  const formatTime = (t) => {
-    if (!t) return '—'
-    const [h, m] = t.split(':')
-    const d = new Date()
-    d.setHours(Number(h), Number(m))
-    return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
-  }
-
   return (
     <div>
       {/* Filters */}
@@ -99,7 +90,7 @@ function BookingsTab({ bookings, loading, onStatusChange, onRefresh }) {
           id="admin-booking-search"
           type="text"
           className="filter-input"
-          placeholder="🔍 Search by name, email, location…"
+          placeholder="🔍 Search name, email, phone, location…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -150,103 +141,26 @@ function BookingsTab({ bookings, loading, onStatusChange, onRefresh }) {
           <div className="empty-title">No bookings match your filters.</div>
         </div>
       ) : (
-        <div className="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Customer</th>
-                <th>Trip Type</th>
-                <th>Passenger</th>
-                <th>Phone</th>
-                <th>Pax</th>
-                <th>From → To</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((b) => (
-                <tr key={b.id}>
-                  <td style={{ color: 'var(--text-muted)', fontWeight: 600 }}>#{b.id}</td>
-                  <td>
-                    <div style={{ fontWeight: 600, fontSize: '0.88rem' }}>
-                      {b.user_info?.name ?? '—'}
-                    </div>
-                    <div style={{ color: 'var(--text-muted)', fontSize: '0.78rem' }}>
-                      {b.user_info?.email ?? '—'}
-                    </div>
-                  </td>
-                  <td style={{ fontSize: '0.85rem' }}>{b.trip_type_display}</td>
-                  <td style={{ fontSize: '0.85rem' }}>{b.name}</td>
-                  <td style={{ fontSize: '0.83rem', whiteSpace: 'nowrap' }}>{b.phone_number || '—'}</td>
-                  <td style={{ textAlign: 'center' }}>{b.num_people}</td>
-                  <td style={{ fontSize: '0.82rem' }}>
-                    <div>{b.from_location}</div>
-                    <div style={{ color: 'var(--text-muted)' }}>→ {b.to_location}</div>
-                  </td>
-                  <td style={{ fontSize: '0.83rem', whiteSpace: 'nowrap' }}>
-                    {formatDate(b.date)}
-                  </td>
-                  <td style={{ fontSize: '0.83rem', whiteSpace: 'nowrap' }}>
-                    {formatTime(b.time)}
-                  </td>
-                  <td>
-                    <StatusBadge status={b.status} />
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-                      {b.status !== 'approved' && (
-                        <button
-                          id={`approve-booking-${b.id}`}
-                          className="btn btn-success btn-sm"
-                          onClick={() => handleStatus(b.id, 'approved')}
-                          disabled={actionLoading === b.id}
-                          title="Approve"
-                        >
-                          {actionLoading === b.id ? (
-                            <span className="spinner spinner-sm" />
-                          ) : (
-                            '✅'
-                          )}
-                        </button>
-                      )}
-                      {b.status !== 'rejected' && (
-                        <button
-                          id={`reject-booking-${b.id}`}
-                          className="btn btn-danger btn-sm"
-                          onClick={() => handleStatus(b.id, 'rejected')}
-                          disabled={actionLoading === b.id}
-                          title="Reject"
-                        >
-                          {actionLoading === b.id ? (
-                            <span className="spinner spinner-sm" />
-                          ) : (
-                            '❌'
-                          )}
-                        </button>
-                      )}
-                      {b.status !== 'pending' && (
-                        <button
-                          id={`reset-booking-${b.id}`}
-                          className="btn btn-ghost btn-sm"
-                          onClick={() => handleStatus(b.id, 'pending')}
-                          disabled={actionLoading === b.id}
-                          title="Reset to Pending"
-                        >
-                          ↩
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="booking-cards-grid">
+          {filtered.map((b) => (
+            <BookingCard
+              key={b.id}
+              booking={b}
+              actionLoading={actionLoading}
+              onApprove={(id) => handleStatus(id, 'approved')}
+              onReject={(id) => handleStatus(id, 'rejected')}
+              onReset={(id) => handleStatus(id, 'pending')}
+              onView={setSelectedBooking}
+            />
+          ))}
         </div>
       )}
+
+      {/* Detail Modal */}
+      <BookingDetailModal
+        booking={selectedBooking}
+        onClose={() => setSelectedBooking(null)}
+      />
     </div>
   )
 }

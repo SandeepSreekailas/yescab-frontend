@@ -70,18 +70,17 @@ export function AuthProvider({ children }) {
     return response.data
   }, [persistAuth])
 
-  // ── Logout ──
-  const logout = useCallback(async () => {
-    try {
-      const stored = localStorage.getItem('refreshToken')
-      if (stored) {
-        await authAPI.logout(stored)
-      }
-    } catch {
-      // Even on error, clear local state — token is expired or already blacklisted
-    } finally {
-      clearStorage()
+  // ── Logout (instant UX + backend token blacklist) ──
+  const logout = useCallback(() => {
+    // 1. Fire backend blacklist FIRST (while accessToken is still in localStorage
+    //    so the axios interceptor can attach the Authorization header)
+    const refreshToken = localStorage.getItem('refreshToken')
+    if (refreshToken) {
+      authAPI.logout(refreshToken).catch(() => {})
     }
+
+    // 2. Then clear auth state immediately — user sees instant logout
+    clearStorage()
   }, [clearStorage])
 
   // ── Sync user profile update ──

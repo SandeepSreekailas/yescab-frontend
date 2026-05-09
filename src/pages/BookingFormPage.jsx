@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { bookingsAPI } from '../api/axios'
+import { bookingsAPI, authAPI } from '../api/axios'
+import { useAuth } from '../context/AuthContext'
 import Navbar from '../components/Navbar'
 import LocationInput from '../components/LocationInput'
 
@@ -50,6 +51,7 @@ const initialForm = (tripType = '') => ({
 export default function BookingFormPage() {
   const navigate = useNavigate()
   const location = useLocation()
+  const { user } = useAuth()
 
   // Pre-fill trip type if navigated from service card
   const [form, setForm] = useState(initialForm(location.state?.tripType ?? ''))
@@ -254,6 +256,32 @@ export default function BookingFormPage() {
             <p className="page-subtitle">Select your locations, then fill in the details.</p>
           </div>
 
+          {/* Email verification gate */}
+          {!user?.is_email_verified && (
+            <div className="alert alert-error" style={{ marginBottom: '1.5rem', padding: '1.25rem' }}>
+              <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>📧 Email verification required</p>
+              <p style={{ fontSize: '0.88rem', marginBottom: '0.75rem' }}>
+                Please verify your email address before making a booking. Check your inbox for the verification link.
+              </p>
+              <button
+                className="btn btn-primary"
+                style={{ fontSize: '0.82rem', padding: '0.4rem 1rem' }}
+                onClick={async () => {
+                  try {
+                    await authAPI.resendVerification()
+                    alert('Verification email sent! Check your inbox.')
+                  } catch {
+                    alert('Could not send email. Please try again later.')
+                  }
+                }}
+              >
+                Resend Verification Email
+              </button>
+            </div>
+          )}
+
+          {user?.is_email_verified === false ? null : (<>
+
           {apiError && (
             <div className="alert alert-error mb-2">⚠️ {apiError}</div>
           )}
@@ -437,6 +465,7 @@ export default function BookingFormPage() {
               )}
             </button>
           </form>
+          </>)}
         </div>
       </div>
     </>

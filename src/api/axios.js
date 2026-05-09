@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const BASE_URL = 'http://localhost:8000/api'
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -114,6 +114,11 @@ export const authAPI = {
   getProfile: () => api.get('/auth/profile/'),
   updateProfile: (data) => api.patch('/auth/profile/', data),
   changePassword: (data) => api.post('/auth/change-password/', data),
+  forgotPassword: (data) => api.post('/auth/forgot-password/', data),
+  resetPassword: (data) => api.post('/auth/reset-password/', data),
+  verifyEmail: (data) => api.post('/auth/verify-email/', data),
+  resendVerification: () => api.post('/auth/resend-verification/'),
+  deleteAccount: (data) => api.post('/auth/delete-account/', data),
 }
 
 // ── Bookings API ──

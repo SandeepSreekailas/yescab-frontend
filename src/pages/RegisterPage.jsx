@@ -9,7 +9,7 @@ export default function RegisterPage() {
 
   const [form, setForm] = useState({
     name: '', email: '', phone: '', place: '',
-    password: '', password2: '',
+    password: '', password2: '', agreed_to_terms: false,
   })
   const [errors, setErrors] = useState({})
   const [apiError, setApiError] = useState('')
@@ -59,12 +59,13 @@ export default function RegisterPage() {
     else if (form.password.length < 8) errs.password = 'Password must be at least 8 characters.'
     if (!form.password2) errs.password2 = 'Please confirm your password.'
     else if (form.password !== form.password2) errs.password2 = 'Passwords do not match.'
+    if (!form.agreed_to_terms) errs.agreed_to_terms = 'You must agree to the Terms and Privacy Policy.'
     return errs
   }
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
+    const { name, value, type, checked } = e.target
+    setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }))
     setApiError('')
   }
@@ -83,6 +84,7 @@ export default function RegisterPage() {
         name: form.name.trim(), email: form.email.toLowerCase().trim(),
         phone: form.phone.trim(), place: form.place.trim(),
         password: form.password, password2: form.password2,
+        agreed_to_terms: form.agreed_to_terms,
       })
       navigate('/dashboard', { replace: true })
     } catch (err) {
@@ -184,6 +186,21 @@ export default function RegisterPage() {
             disabled={loading || googleLoading} style={{ marginTop: '0.5rem' }}>
             {loading ? (<><span className="spinner spinner-sm" /> Creating account…</>) : '🚀 Create Account'}
           </button>
+
+          <label className="form-checkbox" style={{ marginTop: '1rem', display: 'flex', alignItems: 'flex-start', gap: '0.5rem', cursor: 'pointer' }}>
+            <input
+              type="checkbox" name="agreed_to_terms"
+              checked={form.agreed_to_terms} onChange={handleChange}
+              style={{ marginTop: '0.2rem', accentColor: 'var(--primary)' }}
+            />
+            <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+              I agree to the{' '}
+              <Link to="/terms" target="_blank" style={{ color: 'var(--primary)' }}>Terms of Service</Link>
+              {' '}and{' '}
+              <Link to="/privacy" target="_blank" style={{ color: 'var(--primary)' }}>Privacy Policy</Link>
+            </span>
+          </label>
+          {errors.agreed_to_terms && <span className="form-error">{errors.agreed_to_terms}</span>}
         </form>
 
         <p className="auth-footer">

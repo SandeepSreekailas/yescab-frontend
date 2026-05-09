@@ -2,8 +2,8 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
-// Google Client ID — must match backend settings.GOOGLE_OAUTH2_CLIENT_ID
-const GOOGLE_CLIENT_ID = '991577058231-6lrirujnulh77igpboslduqva23l9706.apps.googleusercontent.com'
+// Google Client ID — loaded from environment variable
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
 
 /**
  * Shared hook: loads GIS script + renders Google's own button into a hidden container.
@@ -224,6 +224,11 @@ export default function LoginPage() {
               onChange={handleChange} autoComplete="current-password"
             />
             {errors.password && <span className="form-error">{errors.password}</span>}
+            <div style={{ textAlign: 'right', marginTop: '0.25rem' }}>
+              <Link to="/forgot-password" style={{ fontSize: '0.82rem', color: 'var(--primary)' }}>
+                Forgot password?
+              </Link>
+            </div>
           </div>
 
           <button

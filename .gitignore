@@ -15,13 +15,12 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Environment
-*.local
+# Environment (protect secrets — .env.example and .env.development are safe to commit)
 .env
 .env.local
-.env.development.local
-.env.test.local
+.env.*.local
 .env.production.local
+.env.test.local
 
 # Editor / IDE
 .vscode/*
@@ -35,3 +34,7 @@ Thumbs.db
 *.sln
 *.sw?
 *~
+
+# Audit/temp files
+emojis*.txt
+find_emojis.py

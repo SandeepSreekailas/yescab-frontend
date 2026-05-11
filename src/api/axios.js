@@ -1,6 +1,10 @@
 import axios from 'axios'
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api'
+const BASE_URL = import.meta.env.VITE_API_URL
+
+if (!BASE_URL) {
+  console.error('[YesCab] VITE_API_URL is not configured. API requests will fail.')
+}
 
 const api = axios.create({
   baseURL: BASE_URL,

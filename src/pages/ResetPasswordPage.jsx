@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { authAPI } from '../api/axios'
+import { AlertTriangle, CheckCircle, Lock } from 'lucide-react'
 
 export default function ResetPasswordPage() {
   const [searchParams] = useSearchParams()
@@ -22,8 +23,8 @@ export default function ResetPasswordPage() {
             <span className="auth-logo-text">Yes<span>Cab</span></span>
           </div>
           <h1 className="auth-title">Invalid Reset Link</h1>
-          <div className="alert alert-error mb-2">
-            ⚠️ No reset token provided. Please request a new password reset link.
+          <div className="alert alert-error mb-2" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <AlertTriangle size={18} /> No reset token provided. Please request a new password reset link.
           </div>
           <Link
             to="/forgot-password"
@@ -100,8 +101,8 @@ export default function ResetPasswordPage() {
 
         {success ? (
           <div style={{ textAlign: 'center' }}>
-            <div className="alert alert-success mb-2">
-              ✅ Password reset successful! Redirecting to login…
+            <div className="alert alert-success mb-2" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', justifyContent: 'center' }}>
+              <CheckCircle size={18} /> Password reset successful! Redirecting to login…
             </div>
             <Link to="/login" style={{ color: 'var(--primary)', fontSize: '0.85rem' }}>
               Click here if not redirected
@@ -109,7 +110,7 @@ export default function ResetPasswordPage() {
           </div>
         ) : (
           <>
-            {apiError && <div className="alert alert-error mb-2">⚠️ {apiError}</div>}
+            {apiError && <div className="alert alert-error mb-2" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><AlertTriangle size={18} /> {apiError}</div>}
 
             <form className="auth-form" onSubmit={handleSubmit} noValidate>
               <div className="form-group">
@@ -138,7 +139,7 @@ export default function ResetPasswordPage() {
                 type="submit" className="btn btn-primary btn-full btn-lg"
                 disabled={loading} style={{ marginTop: '0.5rem' }}
               >
-                {loading ? (<><span className="spinner spinner-sm" /> Resetting…</>) : '🔒 Reset Password'}
+                {loading ? (<><span className="spinner spinner-sm" /> Resetting…</>) : <><Lock size={18} /> Reset Password</>}
               </button>
             </form>
           </>

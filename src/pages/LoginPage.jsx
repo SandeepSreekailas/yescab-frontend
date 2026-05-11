@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { AlertTriangle, LogIn } from 'lucide-react'
 
 // Google Client ID — loaded from environment variable
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
@@ -196,7 +197,9 @@ export default function LoginPage() {
         <p className="auth-subtitle">Sign in to manage your cab bookings.</p>
 
         {apiError && (
-          <div className="alert alert-error mb-2">⚠️ {apiError}</div>
+          <div className="alert alert-error mb-2" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <AlertTriangle size={18} /> {apiError}
+          </div>
         )}
 
         {googleLoading && (
@@ -237,7 +240,7 @@ export default function LoginPage() {
             disabled={loading || googleLoading}
             style={{ marginTop: '0.5rem' }}
           >
-            {loading ? (<><span className="spinner spinner-sm" /> Signing in…</>) : '🔐 Sign In'}
+            {loading ? (<><span className="spinner spinner-sm" /> Signing in…</>) : <><LogIn size={18} /> Sign In</>}
           </button>
         </form>
 

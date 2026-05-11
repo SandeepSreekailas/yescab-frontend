@@ -1,11 +1,13 @@
 import { useMemo } from 'react'
 import StatusBadge from './StatusBadge'
 
+import { Plane, PlaneTakeoff, Map, CarFront, Clock, Users, Calendar, Eye, CheckCircle, XCircle, RotateCcw } from 'lucide-react'
+
 const TRIP_ICONS = {
-  airport_pickup: '✈️',
-  airport_drop: '🛫',
-  tour_package: '🗺️',
-  taxi_booking: '🚕',
+  airport_pickup: <Plane size={16} />,
+  airport_drop: <PlaneTakeoff size={16} />,
+  tour_package: <Map size={16} />,
+  taxi_booking: <CarFront size={16} />,
 }
 
 /** Truncate long addresses to maxLen characters */
@@ -40,7 +42,7 @@ function formatTime(t) {
  *   onView         — (booking) => void  — opens the detail modal
  */
 export default function BookingCard({ booking: b, actionLoading, onApprove, onReject, onReset, onView }) {
-  const icon = TRIP_ICONS[b.trip_type] || '🚗'
+  const icon = TRIP_ICONS[b.trip_type] || <CarFront size={16} />
 
   const statusAccent = useMemo(() => {
     if (b.status === 'pending')  return 'rgba(245,158,11,0.25)'
@@ -91,10 +93,10 @@ export default function BookingCard({ booking: b, actionLoading, onApprove, onRe
 
       {/* Meta row */}
       <div className="booking-card-meta">
-        <span>{icon} {b.trip_type_display}</span>
-        <span>📅 {formatDate(b.date)}</span>
-        <span>🕐 {formatTime(b.time)}</span>
-        <span>👥 {b.num_people}</span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>{icon} {b.trip_type_display}</span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}><Calendar size={16} /> {formatDate(b.date)}</span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}><Clock size={16} /> {formatTime(b.time)}</span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}><Users size={16} /> {b.num_people}</span>
       </div>
 
       {/* Actions */}
@@ -103,8 +105,9 @@ export default function BookingCard({ booking: b, actionLoading, onApprove, onRe
           id={`view-booking-${b.id}`}
           className="btn btn-secondary btn-sm"
           onClick={() => onView(b)}
+          style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}
         >
-          👁 View
+          <Eye size={14} /> View
         </button>
 
         {b.status !== 'approved' && (
@@ -113,8 +116,9 @@ export default function BookingCard({ booking: b, actionLoading, onApprove, onRe
             className="btn btn-success btn-sm"
             onClick={() => onApprove(b.id)}
             disabled={actionLoading === b.id}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}
           >
-            {actionLoading === b.id ? <span className="spinner spinner-sm" /> : '✅ Approve'}
+            {actionLoading === b.id ? <span className="spinner spinner-sm" /> : <><CheckCircle size={14} /> Approve</>}
           </button>
         )}
 
@@ -124,8 +128,9 @@ export default function BookingCard({ booking: b, actionLoading, onApprove, onRe
             className="btn btn-danger btn-sm"
             onClick={() => onReject(b.id)}
             disabled={actionLoading === b.id}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}
           >
-            {actionLoading === b.id ? <span className="spinner spinner-sm" /> : '❌ Reject'}
+            {actionLoading === b.id ? <span className="spinner spinner-sm" /> : <><XCircle size={14} /> Reject</>}
           </button>
         )}
 
@@ -136,8 +141,9 @@ export default function BookingCard({ booking: b, actionLoading, onApprove, onRe
             onClick={() => onReset(b.id)}
             disabled={actionLoading === b.id}
             title="Reset to Pending"
+            style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}
           >
-            ↩ Reset
+            <RotateCcw size={14} /> Reset
           </button>
         )}
       </div>

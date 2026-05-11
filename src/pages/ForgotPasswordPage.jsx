@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { authAPI } from '../api/axios'
+import { CheckCircle, Mail } from 'lucide-react'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -49,8 +50,8 @@ export default function ForgotPasswordPage() {
 
         {success ? (
           <div style={{ textAlign: 'center' }}>
-            <div className="alert alert-success mb-2">
-              ✅ If an account with that email exists, a reset link has been sent. Please check your inbox.
+            <div className="alert alert-success mb-2" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <CheckCircle size={18} /> If an account with that email exists, a reset link has been sent. Please check your inbox.
             </div>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '1rem' }}>
               Didn&apos;t receive an email? Check your spam folder or try again in a few minutes.
@@ -89,7 +90,7 @@ export default function ForgotPasswordPage() {
               {loading ? (
                 <><span className="spinner spinner-sm" /> Sending…</>
               ) : (
-                '📧 Send Reset Link'
+                <><Mail size={18} /> Send Reset Link</>
               )}
             </button>
           </form>

@@ -5,6 +5,7 @@ import StatusBadge from '../components/StatusBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
 import BookingCard from '../components/BookingCard'
 import BookingDetailModal from '../components/BookingDetailModal'
+import { Users, Package, Clock, CheckCircle, XCircle, Search, RefreshCw, Trash2, Mail, Phone, Calendar, AlertTriangle } from 'lucide-react'
 
 // ── Sub-components ──────────────────────────────────────────
 
@@ -17,27 +18,27 @@ function StatsBar({ bookings, users }) {
   return (
     <div className="stats-grid">
       <div className="stat-card">
-        <span className="stat-icon">👥</span>
+        <span className="stat-icon"><Users size={24} color="var(--text-muted)" /></span>
         <span className="stat-value">{users.length}</span>
         <span className="stat-label">Total Users</span>
       </div>
       <div className="stat-card">
-        <span className="stat-icon">📦</span>
+        <span className="stat-icon"><Package size={24} color="var(--text-muted)" /></span>
         <span className="stat-value">{total}</span>
         <span className="stat-label">Total Bookings</span>
       </div>
       <div className="stat-card">
-        <span className="stat-icon">⏳</span>
+        <span className="stat-icon"><Clock size={24} color="#fbbf24" /></span>
         <span className="stat-value" style={{ color: '#fbbf24' }}>{pending}</span>
         <span className="stat-label">Pending</span>
       </div>
       <div className="stat-card">
-        <span className="stat-icon">✅</span>
+        <span className="stat-icon"><CheckCircle size={24} color="var(--success)" /></span>
         <span className="stat-value" style={{ color: 'var(--success)' }}>{approved}</span>
         <span className="stat-label">Approved</span>
       </div>
       <div className="stat-card">
-        <span className="stat-icon">❌</span>
+        <span className="stat-icon"><XCircle size={24} color="var(--danger)" /></span>
         <span className="stat-value" style={{ color: 'var(--danger)' }}>{rejected}</span>
         <span className="stat-label">Rejected</span>
       </div>
@@ -90,7 +91,7 @@ function BookingsTab({ bookings, loading, onStatusChange, onRefresh }) {
           id="admin-booking-search"
           type="text"
           className="filter-input"
-          placeholder="🔍 Search name, email, phone, location…"
+          placeholder="Search name, email, phone, location…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -101,29 +102,24 @@ function BookingsTab({ bookings, loading, onStatusChange, onRefresh }) {
           onChange={(e) => setStatusFilter(e.target.value)}
         >
           <option value="">All Statuses</option>
-          <option value="pending">⏳ Pending</option>
-          <option value="approved">✅ Approved</option>
-          <option value="rejected">❌ Rejected</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
         </select>
         <select
-          id="admin-type-filter"
+          id="admin-trip-filter"
           className="filter-select"
           value={tripFilter}
           onChange={(e) => setTripFilter(e.target.value)}
         >
           <option value="">All Trip Types</option>
-          <option value="airport_pickup">✈️ Airport Pickup</option>
-          <option value="airport_drop">🛫 Airport Drop</option>
-          <option value="tour_package">🗺️ Tour Package</option>
-          <option value="taxi_booking">🚕 Taxi Booking</option>
+          <option value="airport_pickup">Airport Pickup</option>
+          <option value="airport_drop">Airport Drop</option>
+          <option value="tour_package">Tour Package</option>
+          <option value="taxi_booking">Taxi Booking</option>
         </select>
-        <button
-          id="admin-refresh-bookings"
-          className="btn btn-secondary btn-sm"
-          onClick={onRefresh}
-          disabled={loading}
-        >
-          🔄 Refresh
+        <button className="btn btn-secondary btn-sm" onClick={onRefresh} disabled={loading} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <RefreshCw size={16} /> Refresh
         </button>
       </div>
 
@@ -135,12 +131,13 @@ function BookingsTab({ bookings, loading, onStatusChange, onRefresh }) {
 
       {loading ? (
         <LoadingSpinner text="Loading bookings…" />
-      ) : filtered.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-icon">📋</div>
-          <div className="empty-title">No bookings match your filters.</div>
-        </div>
-      ) : (
+        ) : filtered.length === 0 ? (
+          <div className="empty-state card">
+            <div className="empty-icon"><Search size={32} color="var(--text-muted)" /></div>
+            <div className="empty-title">No bookings found</div>
+            <p className="empty-text">Try adjusting your search or filters.</p>
+          </div>
+        ) : (
         <div className="booking-cards-grid">
           {filtered.map((b) => (
             <BookingCard
@@ -187,7 +184,7 @@ function UsersTab({ users, loading, onUsersChange, onRefresh }) {
       await adminAPI.updateUser(user.id, { is_admin: !user.is_admin })
       onUsersChange(
         users.map((u) =>
-          u.id === user.id ? { ...u, is_admin: !u.is_admin } : u
+          u.id === user.id ? { ...u, is_admin: !user.is_admin } : u
         )
       )
     } catch {
@@ -203,7 +200,7 @@ function UsersTab({ users, loading, onUsersChange, onRefresh }) {
       await adminAPI.updateUser(user.id, { is_active: !user.is_active })
       onUsersChange(
         users.map((u) =>
-          u.id === user.id ? { ...u, is_active: !u.is_active } : u
+          u.id === user.id ? { ...u, is_active: !user.is_active } : u
         )
       )
     } catch {
@@ -234,7 +231,7 @@ function UsersTab({ users, loading, onUsersChange, onRefresh }) {
           id="admin-user-search"
           type="text"
           className="filter-input"
-          placeholder="🔍 Search by name, email, phone, city…"
+          placeholder="Search by name, email, phone, city…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -244,7 +241,7 @@ function UsersTab({ users, loading, onUsersChange, onRefresh }) {
           onClick={onRefresh}
           disabled={loading}
         >
-          🔄 Refresh
+          <RefreshCw size={16} /> Refresh
         </button>
       </div>
 
@@ -255,12 +252,13 @@ function UsersTab({ users, loading, onUsersChange, onRefresh }) {
 
       {loading ? (
         <LoadingSpinner text="Loading users…" />
-      ) : filtered.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-icon">👥</div>
-          <div className="empty-title">No users found.</div>
-        </div>
-      ) : (
+        ) : filtered.length === 0 ? (
+          <div className="empty-state card">
+            <div className="empty-icon"><Users size={32} color="var(--text-muted)" /></div>
+            <div className="empty-title">No users found</div>
+            <p className="empty-text">Try adjusting your search criteria.</p>
+          </div>
+        ) : (
         <div className="table-wrap">
           <table>
             <thead>
@@ -313,9 +311,9 @@ function UsersTab({ users, loading, onUsersChange, onRefresh }) {
                       {actionLoading === u.id ? (
                         <span className="spinner spinner-sm" />
                       ) : u.is_admin ? (
-                        '✅ Yes'
+                        'Yes'
                       ) : (
-                        '❌ No'
+                        'No'
                       )}
                     </button>
                   </td>
@@ -331,9 +329,9 @@ function UsersTab({ users, loading, onUsersChange, onRefresh }) {
                       {actionLoading === u.id + '_active' ? (
                         <span className="spinner spinner-sm" />
                       ) : u.is_active ? (
-                        '✅ Active'
+                        'Active'
                       ) : (
-                        '❌ Inactive'
+                        'Inactive'
                       )}
                     </button>
                   </td>
@@ -341,10 +339,11 @@ function UsersTab({ users, loading, onUsersChange, onRefresh }) {
                     {confirmDelete === u.id ? (
                       <div style={{ display: 'flex', gap: '0.35rem' }}>
                         <button
-                          id={`confirm-delete-${u.id}`}
                           className="btn btn-danger btn-sm"
+                          title="Delete user permanently"
                           onClick={() => deleteUser(u.id)}
                           disabled={actionLoading === u.id + '_del'}
+                          style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
                         >
                           {actionLoading === u.id + '_del' ? (
                             <span className="spinner spinner-sm" />
@@ -365,8 +364,9 @@ function UsersTab({ users, loading, onUsersChange, onRefresh }) {
                         className="btn btn-danger btn-sm"
                         onClick={() => setConfirmDelete(u.id)}
                         title="Delete user"
+                        style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
                       >
-                        🗑 Delete
+                        <Trash2 size={16} /> Delete
                       </button>
                     )}
                   </td>
@@ -434,16 +434,17 @@ export default function AdminDashboardPage() {
     <>
       <Navbar />
       <div className="page-wrapper">
-        {/* Page Header */}
         <div style={{ marginBottom: '1.5rem' }}>
-          <h1 className="page-title">⚙️ Admin Dashboard</h1>
+          <h1 className="page-title">Admin Dashboard</h1>
           <p className="page-subtitle">
             Manage bookings, approve or reject requests, and oversee all users.
           </p>
         </div>
 
         {fetchError && (
-          <div className="alert alert-error mb-2">⚠️ {fetchError}</div>
+          <div className="alert alert-error mb-2" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <AlertTriangle size={18} /> {fetchError}
+          </div>
         )}
 
         {/* Stats Bar */}
@@ -455,18 +456,18 @@ export default function AdminDashboardPage() {
         {/* Tabs */}
         <div className="tabs">
           <button
-            id="tab-bookings"
             className={`tab ${activeTab === 'bookings' ? 'active' : ''}`}
             onClick={() => setActiveTab('bookings')}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
           >
-            📋 Bookings ({bookings.length})
+            <Package size={18} /> Manage Bookings
           </button>
           <button
-            id="tab-users"
             className={`tab ${activeTab === 'users' ? 'active' : ''}`}
             onClick={() => setActiveTab('users')}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
           >
-            👥 Users ({users.length})
+            <Users size={18} /> Manage Users
           </button>
         </div>
 

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import { MapPin, Navigation, Info } from 'lucide-react'
 
 // ── Fix Leaflet default icon paths broken by bundlers ──
 delete L.Icon.Default.prototype._getIconUrl
@@ -141,16 +142,18 @@ export default function LocationPicker({
             id="mode-pickup"
             className={`tab ${mode === 'pickup' ? 'active' : ''}`}
             onClick={() => setMode('pickup')}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
           >
-            📍 Set Pickup
+            <MapPin size={16} /> Set Pickup
           </button>
           <button
             type="button"
             id="mode-drop"
             className={`tab ${mode === 'drop' ? 'active' : ''}`}
             onClick={() => setMode('drop')}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
           >
-            🏁 Set Drop
+            <Navigation size={16} /> Set Drop
           </button>
         </div>
         <div className="location-picker-hint">
@@ -172,8 +175,8 @@ export default function LocationPicker({
 
       {/* Geolocation warnings */}
       {geoError && (
-        <div className="alert alert-info" style={{ marginBottom: '0.75rem', fontSize: '0.82rem' }}>
-          📍 {geoError}
+        <div className="alert alert-info" style={{ marginBottom: '0.75rem', fontSize: '0.82rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <Info size={16} /> {geoError}
         </div>
       )}
 
@@ -204,7 +207,7 @@ export default function LocationPicker({
             {pickupCoords && (
               <Marker position={[pickupCoords.lat, pickupCoords.lng]} icon={pickupIcon}>
                 <Popup>
-                  <strong style={{ color: '#16a34a' }}>📍 Pickup</strong>
+                  <strong style={{ color: '#16a34a', display: 'flex', alignItems: 'center', gap: '0.2rem' }}><MapPin size={14} /> Pickup</strong>
                   <br />
                   <span style={{ fontSize: '0.82rem' }}>{pickupAddress || 'Selected pickup location'}</span>
                 </Popup>
@@ -215,7 +218,7 @@ export default function LocationPicker({
             {dropCoords && (
               <Marker position={[dropCoords.lat, dropCoords.lng]} icon={dropIcon}>
                 <Popup>
-                  <strong style={{ color: '#dc2626' }}>🏁 Drop-off</strong>
+                  <strong style={{ color: '#dc2626', display: 'flex', alignItems: 'center', gap: '0.2rem' }}><Navigation size={14} /> Drop-off</strong>
                   <br />
                   <span style={{ fontSize: '0.82rem' }}>{dropAddress || 'Selected drop location'}</span>
                 </Popup>

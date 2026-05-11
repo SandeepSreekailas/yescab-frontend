@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { authAPI } from '../api/axios'
 import { useAuth } from '../context/AuthContext'
+import { CheckCircle, AlertTriangle } from 'lucide-react'
 
 export default function VerifyEmailPage() {
   const [searchParams] = useSearchParams()
@@ -63,8 +64,8 @@ export default function VerifyEmailPage() {
 
         {status === 'success' && (
           <>
-            <div className="alert alert-success mb-2" style={{ fontSize: '1.1rem' }}>
-              ✅ Your email has been verified successfully!
+            <div className="alert alert-success mb-2" style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.4rem', justifyContent: 'center' }}>
+              <CheckCircle size={20} /> Your email has been verified successfully!
             </div>
             <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>
               You now have full access to YesCab.
@@ -81,7 +82,7 @@ export default function VerifyEmailPage() {
 
         {status === 'error' && (
           <>
-            <div className="alert alert-error mb-2">⚠️ {errorMsg}</div>
+            <div className="alert alert-error mb-2" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', justifyContent: 'center' }}><AlertTriangle size={18} /> {errorMsg}</div>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '0.5rem' }}>
               You can request a new verification email from your dashboard.
             </p>

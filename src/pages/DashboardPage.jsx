@@ -5,29 +5,30 @@ import { bookingsAPI } from '../api/axios'
 import Navbar from '../components/Navbar'
 import StatusBadge from '../components/StatusBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { CarFront, Plane, PlaneTakeoff, Map, Package, CheckCircle, XCircle, Clock, ClipboardList, MapPin } from 'lucide-react'
 
 const SERVICES = [
   {
     type: 'airport_pickup',
-    icon: '✈️',
+    icon: <Plane size={32} color="var(--primary)" />,
     name: 'Airport Pickup',
     desc: 'We pick you up from the airport and drop you home safely.',
   },
   {
     type: 'airport_drop',
-    icon: '🛫',
+    icon: <PlaneTakeoff size={32} color="var(--primary)" />,
     name: 'Airport Drop',
     desc: 'Never miss a flight — reliable drop-off at any terminal.',
   },
   {
     type: 'tour_package',
-    icon: '🗺️',
+    icon: <Map size={32} color="var(--primary)" />,
     name: 'Tour Package',
     desc: 'Curated sightseeing tours with a dedicated driver.',
   },
   {
     type: 'taxi_booking',
-    icon: '🚕',
+    icon: <CarFront size={32} color="var(--primary)" />,
     name: 'Taxi Booking',
     desc: 'On-demand local taxi for any destination in the city.',
   },
@@ -81,7 +82,7 @@ export default function DashboardPage() {
         {/* Hero Banner */}
         <div className="dashboard-hero animate-fadeup">
           <h1 className="dashboard-hero-title">
-            {greeting()}, <span>{user?.name?.split(' ')[0] ?? 'there'}</span> 👋
+            {greeting()}, <span>{user?.name?.split(' ')[0] ?? 'there'}</span>
           </h1>
           <p className="dashboard-hero-sub">
             {isAdmin 
@@ -95,10 +96,10 @@ export default function DashboardPage() {
                 className="btn btn-primary btn-lg"
                 onClick={() => navigate('/book')}
               >
-                🚕 Book a Cab Now
+                <CarFront size={20} /> Book a Cab Now
               </button>
               <Link to="/my-bookings" className="btn btn-secondary btn-lg">
-                📋 View My Bookings
+                <ClipboardList size={20} /> View My Bookings
               </Link>
             </div>
           )}
@@ -108,26 +109,26 @@ export default function DashboardPage() {
         {!isAdmin && (
           <div className="stats-grid">
             <div className="stat-card">
-              <span className="stat-icon">📦</span>
+              <span className="stat-icon"><Package size={24} color="var(--text-muted)" /></span>
               <span className="stat-value">{loading ? '—' : stats.total}</span>
               <span className="stat-label">Total Bookings</span>
             </div>
             <div className="stat-card">
-              <span className="stat-icon">⏳</span>
+              <span className="stat-icon"><Clock size={24} color="#fbbf24" /></span>
               <span className="stat-value" style={{ color: '#fbbf24' }}>
                 {loading ? '—' : stats.pending}
               </span>
               <span className="stat-label">Pending</span>
             </div>
             <div className="stat-card">
-              <span className="stat-icon">✅</span>
+              <span className="stat-icon"><CheckCircle size={24} color="var(--success)" /></span>
               <span className="stat-value" style={{ color: 'var(--success)' }}>
                 {loading ? '—' : stats.approved}
               </span>
               <span className="stat-label">Approved</span>
             </div>
             <div className="stat-card">
-              <span className="stat-icon">❌</span>
+              <span className="stat-icon"><XCircle size={24} color="var(--danger)" /></span>
               <span className="stat-value" style={{ color: 'var(--danger)' }}>
                 {loading ? '—' : stats.rejected}
               </span>
@@ -171,7 +172,9 @@ export default function DashboardPage() {
               <LoadingSpinner text="Loading your bookings…" />
             ) : recentBookings.length === 0 ? (
               <div className="card" style={{ textAlign: 'center', padding: '2.5rem' }}>
-                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🚕</div>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                  <CarFront size={48} color="var(--text-muted)" />
+                </div>
                 <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>
                   No bookings yet. Make your first ride today!
                 </p>

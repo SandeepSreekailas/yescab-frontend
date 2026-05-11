@@ -4,12 +4,13 @@ import { bookingsAPI } from '../api/axios'
 import Navbar from '../components/Navbar'
 import StatusBadge from '../components/StatusBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
+import { RefreshCw, CarFront, AlertTriangle } from 'lucide-react'
 
 const STATUS_FILTERS = [
   { value: '', label: 'All Statuses' },
-  { value: 'pending', label: '⏳ Pending' },
-  { value: 'approved', label: '✅ Approved' },
-  { value: 'rejected', label: '❌ Rejected' },
+  { value: 'pending', label: 'Pending' },
+  { value: 'approved', label: 'Approved' },
+  { value: 'rejected', label: 'Rejected' },
 ]
 
 export default function BookingHistoryPage() {
@@ -96,8 +97,9 @@ export default function BookingHistoryPage() {
               onClick={fetchBookings}
               disabled={loading}
               title="Refresh"
+              style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
             >
-              🔄 Refresh
+              <RefreshCw size={16} /> Refresh
             </button>
             <button
               className="btn btn-primary btn-sm"
@@ -110,8 +112,8 @@ export default function BookingHistoryPage() {
 
         {/* Error */}
         {error && (
-          <div className="alert alert-error mb-2">
-            ⚠️ {error}
+          <div className="alert alert-error mb-2" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <AlertTriangle size={18} /> {error}
             <button
               className="btn btn-ghost btn-sm"
               onClick={fetchBookings}
@@ -126,9 +128,9 @@ export default function BookingHistoryPage() {
         {loading ? (
           <LoadingSpinner text="Loading your bookings…" />
         ) : filteredBookings.length === 0 ? (
-          <div className="empty-state card">
-            <div className="empty-icon">🚕</div>
-            <div className="empty-title">
+          <div className="empty-state card" style={{ textAlign: 'center', padding: '3rem 1.5rem' }}>
+            <div className="empty-icon" style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}><CarFront size={48} color="var(--text-muted)" /></div>
+            <div className="empty-title" style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text)' }}>
               {statusFilter ? `No ${statusFilter} bookings found.` : 'No bookings yet.'}
             </div>
             <p className="empty-text">

@@ -1,0 +1,11 @@
+BookingCard.jsx: 👥 📅 ❌ ✈ 🚕 🕐 🚗 ✅ 🛫 👁 🗺
+BookingDetailModal.jsx: 📅 📍 🏁 📝 ✕ 🚗 🗺 👤
+LocationInput.jsx: 📍 ✓ ✕ 🔍 ⚠ ✅ 🔎 🗺
+LocationPicker.jsx: 📍 🏁
+StatusBadge.jsx: ❌ ✅
+AdminDashboardPage.jsx: 👥 🗑 🔍 ⚠ 📋 ⚙
+ForgotPasswordPage.jsx: ✅ 📧
+LoginPage.jsx: ⚠ 🔐
+RegisterPage.jsx: ⚠ 🚀
+ResetPasswordPage.jsx: ⚠ 🔒 ✅
+VerifyEmailPage.jsx: ✅ ⚠

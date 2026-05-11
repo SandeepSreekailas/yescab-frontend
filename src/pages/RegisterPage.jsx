@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useGoogleSignIn, GoogleSignInButton } from './LoginPage'
+import { AlertTriangle, UserPlus } from 'lucide-react'
 
 export default function RegisterPage() {
   const { register, googleLogin } = useAuth()
@@ -119,7 +120,7 @@ export default function RegisterPage() {
         <h1 className="auth-title">Create your account</h1>
         <p className="auth-subtitle">Join YesCab and start booking rides in seconds.</p>
 
-        {apiError && (<div className="alert alert-error mb-2">⚠️ {apiError}</div>)}
+        {apiError && (<div className="alert alert-error mb-2" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><AlertTriangle size={18} /> {apiError}</div>)}
 
         {googleLoading && (
           <div className="alert alert-info mb-2" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -184,7 +185,7 @@ export default function RegisterPage() {
           <button id="register-submit-btn" type="submit"
             className="btn btn-primary btn-full btn-lg"
             disabled={loading || googleLoading} style={{ marginTop: '0.5rem' }}>
-            {loading ? (<><span className="spinner spinner-sm" /> Creating account…</>) : '🚀 Create Account'}
+            {loading ? (<><span className="spinner spinner-sm" /> Creating account…</>) : <><UserPlus size={18} /> Create Account</>}
           </button>
 
           <label className="form-checkbox" style={{ marginTop: '1rem', display: 'flex', alignItems: 'flex-start', gap: '0.5rem', cursor: 'pointer' }}>

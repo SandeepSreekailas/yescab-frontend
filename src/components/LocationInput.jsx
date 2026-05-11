@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import { Map as MapIcon, MapPin, Search, AlertTriangle, Check, X } from 'lucide-react'
 
 // ── Scroll lock utility ──
 // Centralized so every close path (confirm, cancel, Escape, overlay click) is safe.
@@ -441,7 +442,7 @@ export default function LocationInput({
   }, [])
 
   // ── Computed display values ──
-  const sourceTag = coords && value === query ? '✓ Location set' : null
+  const sourceTag = coords && value === query ? 'Location set' : null
   const displayError = error || localError
 
   const isTyping = query.trim().length >= 2
@@ -456,9 +457,9 @@ export default function LocationInput({
         {sourceTag && (
           <span style={{
             color: 'var(--success)', fontWeight: 400,
-            textTransform: 'none', marginLeft: '0.35rem', fontSize: '0.78rem',
+            textTransform: 'none', marginLeft: '0.35rem', fontSize: '0.78rem', display: 'inline-flex', alignItems: 'center', gap: '0.2rem'
           }}>
-            {sourceTag}
+            <Check size={12} /> {sourceTag}
           </span>
         )}
       </label>
@@ -491,7 +492,7 @@ export default function LocationInput({
               onClick={handleClear}
               title="Clear"
             >
-              ✕
+              <X size={16} />
             </button>
           )}
         </div>
@@ -503,7 +504,7 @@ export default function LocationInput({
           onClick={openMapModal}
           title="Pick on map"
         >
-          🗺️
+          <MapIcon size={18} />
         </button>
         <button
           type="button"
@@ -512,7 +513,7 @@ export default function LocationInput({
           disabled={geoLoading}
           title="Use current location"
         >
-          {geoLoading ? <span className="spinner spinner-sm" /> : '📍'}
+          {geoLoading ? <span className="spinner spinner-sm" /> : <MapPin size={18} />}
         </button>
       </div>
 
@@ -526,8 +527,8 @@ export default function LocationInput({
           {/* API autocomplete results */}
           {showApiSection && (
             <>
-              <div className="loc-dropdown-header">
-                🔍 Search Results
+              <div className="loc-dropdown-header" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                <Search size={14} /> Search Results
                 {apiLoading && <span className="spinner spinner-sm" style={{ marginLeft: '0.5rem', width: 12, height: 12 }} />}
               </div>
               {apiResults.map((result, idx) => (
@@ -537,7 +538,7 @@ export default function LocationInput({
                   className="loc-dropdown-item"
                   onClick={() => handleSelectApiResult(result)}
                 >
-                  <span className="loc-dropdown-icon">🔎</span>
+                  <span className="loc-dropdown-icon" style={{ display: 'flex', alignItems: 'center' }}><Search size={14} /></span>
                   <div className="loc-dropdown-text">
                     <span className="loc-dropdown-name">{result.name}</span>
                     {result.area && <span className="loc-dropdown-area">{result.area}</span>}
@@ -563,7 +564,7 @@ export default function LocationInput({
                   className="loc-dropdown-item"
                   onClick={() => handleSelectPlace(place)}
                 >
-                  <span className="loc-dropdown-icon">📍</span>
+                  <span className="loc-dropdown-icon" style={{ display: 'flex', alignItems: 'center' }}><MapPin size={14} /></span>
                   <div className="loc-dropdown-text">
                     <span className="loc-dropdown-name">{place.name}</span>
                     <span className="loc-dropdown-area">{place.area}</span>
@@ -649,12 +650,12 @@ const MapPickerModal = memo(function MapPickerModal({
         {/* Header */}
         <div className="modal-header">
           <div>
-            <h2 className="modal-title">📍 Pick Location</h2>
+            <h2 className="modal-title" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><MapPin size={20} /> Pick Location</h2>
             <span className="modal-subtitle">
               Tap on the map to select a point in Ernakulam
             </span>
           </div>
-          <button className="modal-close" onClick={onClose} title="Close">✕</button>
+          <button className="modal-close" onClick={onClose} title="Close" style={{ display: 'flex', alignItems: 'center' }}><X size={20} /></button>
         </div>
 
         {/* Map */}
@@ -677,8 +678,8 @@ const MapPickerModal = memo(function MapPickerModal({
 
         {/* Bounds error */}
         {boundsError && (
-          <div className="loc-map-bounds-error">
-            ⚠️ {boundsError}
+          <div className="loc-map-bounds-error" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            <AlertTriangle size={18} /> {boundsError}
           </div>
         )}
 
@@ -689,8 +690,8 @@ const MapPickerModal = memo(function MapPickerModal({
               <span className="spinner spinner-sm" /> Fetching address…
             </span>
           ) : marker ? (
-            <div className="loc-map-address-text">
-              <span style={{ color: 'var(--success)', marginRight: '0.4rem' }}>📍</span>
+            <div className="loc-map-address-text" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <MapPin size={16} color="var(--success)" />
               {address || `${marker[0].toFixed(5)}, ${marker[1].toFixed(5)}`}
             </div>
           ) : (
@@ -706,8 +707,9 @@ const MapPickerModal = memo(function MapPickerModal({
             className="btn btn-primary btn-sm"
             onClick={onConfirm}
             disabled={!marker || reverseLoading}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
           >
-            ✅ Confirm Location
+            <Check size={16} /> Confirm Location
           </button>
         </div>
       </div>

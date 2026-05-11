@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import StatusBadge from './StatusBadge'
+import { MapPin, Navigation, Map, Calendar, FileText, User, X } from 'lucide-react'
 
 /**
  * BookingDetailModal — full-screen overlay showing complete booking details + map.
@@ -82,7 +83,9 @@ export default function BookingDetailModal({ booking, onClose }) {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <StatusBadge status={b.status} />
-            <button className="modal-close" onClick={onClose} title="Close">✕</button>
+            <button className="modal-close" onClick={onClose} title="Close" style={{ display: 'flex', alignItems: 'center' }}>
+              <X size={20} />
+            </button>
           </div>
         </div>
 
@@ -103,8 +106,8 @@ export default function BookingDetailModal({ booking, onClose }) {
               />
             </div>
           ) : hasCoords && mapError ? (
-            <div className="modal-map-fallback">
-              🗺️ Map preview unavailable. Coordinates shown below.
+            <div className="modal-map-fallback" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Map size={18} /> Map preview unavailable. Coordinates shown below.
             </div>
           ) : null}
 
@@ -112,7 +115,7 @@ export default function BookingDetailModal({ booking, onClose }) {
           <div className="modal-detail-grid">
             {/* Customer Info */}
             <div className="modal-detail-section">
-              <h4 className="modal-detail-heading">👤 Customer</h4>
+              <h4 className="modal-detail-heading" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><User size={16} /> Customer</h4>
               <div className="modal-detail-row">
                 <span className="modal-detail-label">Account</span>
                 <span className="modal-detail-value">{b.user_info?.name ?? '—'} ({b.user_info?.email ?? '—'})</span>
@@ -133,9 +136,9 @@ export default function BookingDetailModal({ booking, onClose }) {
 
             {/* Route */}
             <div className="modal-detail-section">
-              <h4 className="modal-detail-heading">🚗 Route</h4>
+              <h4 className="modal-detail-heading" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><Navigation size={16} /> Route</h4>
               <div className="modal-detail-row">
-                <span className="modal-detail-label">📍 Pickup</span>
+                <span className="modal-detail-label" style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}><MapPin size={14} /> Pickup</span>
                 <span className="modal-detail-value">{b.pickup_address || b.from_location}</span>
               </div>
               {hasPickupCoords && (
@@ -147,7 +150,7 @@ export default function BookingDetailModal({ booking, onClose }) {
                 </div>
               )}
               <div className="modal-detail-row">
-                <span className="modal-detail-label">🏁 Drop</span>
+                <span className="modal-detail-label" style={{ display: 'flex', alignItems: 'center', gap: '0.2rem' }}><MapPin size={14} color="var(--danger)" /> Drop</span>
                 <span className="modal-detail-value">{b.drop_address || b.to_location}</span>
               </div>
               {hasDropCoords && (
@@ -162,7 +165,7 @@ export default function BookingDetailModal({ booking, onClose }) {
 
             {/* Schedule */}
             <div className="modal-detail-section">
-              <h4 className="modal-detail-heading">📅 Schedule</h4>
+              <h4 className="modal-detail-heading" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><Calendar size={16} /> Schedule</h4>
               <div className="modal-detail-row">
                 <span className="modal-detail-label">Date</span>
                 <span className="modal-detail-value">{formatDate(b.date)}</span>
@@ -176,7 +179,7 @@ export default function BookingDetailModal({ booking, onClose }) {
             {/* Notes */}
             {b.notes && (
               <div className="modal-detail-section">
-                <h4 className="modal-detail-heading">📝 Notes</h4>
+                <h4 className="modal-detail-heading" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><FileText size={16} /> Notes</h4>
                 <p className="modal-detail-notes">{b.notes}</p>
               </div>
             )}

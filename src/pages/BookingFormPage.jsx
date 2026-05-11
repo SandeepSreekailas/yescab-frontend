@@ -5,11 +5,13 @@ import { useAuth } from '../context/AuthContext'
 import Navbar from '../components/Navbar'
 import LocationInput from '../components/LocationInput'
 
+import { Plane, PlaneTakeoff, Map, CarFront, CheckCircle, Send, ArrowDownUp, AlertCircle, XCircle } from 'lucide-react'
+
 const TRIP_TYPES = [
-  { value: 'airport_pickup', label: '✈️ Airport Pickup' },
-  { value: 'airport_drop', label: '🛫 Airport Drop' },
-  { value: 'tour_package', label: '🗺️ Tour Package' },
-  { value: 'taxi_booking', label: '🚕 Taxi Booking' },
+  { value: 'airport_pickup', label: 'Airport Pickup' },
+  { value: 'airport_drop', label: 'Airport Drop' },
+  { value: 'tour_package', label: 'Tour Package' },
+  { value: 'taxi_booking', label: 'Taxi Booking' },
 ]
 
 // ── Date/time helpers (computed fresh to avoid stale values if page stays open) ──
@@ -259,7 +261,7 @@ export default function BookingFormPage() {
           {/* Email verification gate */}
           {!user?.is_email_verified && (
             <div className="alert alert-error" style={{ marginBottom: '1.5rem', padding: '1.25rem' }}>
-              <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>📧 Email verification required</p>
+              <p style={{ fontWeight: 600, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}><AlertCircle size={18} /> Email verification required</p>
               <p style={{ fontSize: '0.88rem', marginBottom: '0.75rem' }}>
                 Please verify your email address before making a booking. Check your inbox for the verification link.
               </p>
@@ -282,14 +284,8 @@ export default function BookingFormPage() {
 
           {user?.is_email_verified === false ? null : (<>
 
-          {apiError && (
-            <div className="alert alert-error mb-2">⚠️ {apiError}</div>
-          )}
-          {success && (
-            <div className="alert alert-success mb-2">
-              ✅ {success} Redirecting to your bookings…
-            </div>
-          )}
+          {apiError && <div className="alert alert-error mb-2"><XCircle size={18} /> {apiError}</div>}
+          {success && <div className="alert alert-success mb-2"><CheckCircle size={18} /> {success} Redirecting to your bookings…</div>}
 
           <form className="card animate-fadeup" onSubmit={handleSubmit} noValidate>
 
@@ -318,7 +314,7 @@ export default function BookingFormPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 <LocationInput
                   id="pickup-location"
-                  label="📍 Pickup Location"
+                  label="Pickup Location"
                   placeholder="Search or pick a pickup location…"
                   value={form.from_location}
                   coords={form.pickup_lat != null ? { lat: form.pickup_lat, lng: form.pickup_lng } : null}
@@ -330,18 +326,19 @@ export default function BookingFormPage() {
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                   <button
                     type="button"
-                    className="btn btn-ghost loc-swap-btn"
+                    className="btn btn-secondary"
                     onClick={handleSwapLocations}
-                    title="Swap pickup and drop"
-                    disabled={!form.from_location && !form.to_location}
+                    style={{ alignSelf: 'center', margin: '0.25rem 0', borderRadius: 'var(--radius-full)', padding: '0.6rem' }}
+                    title="Swap locations"
+                    disabled={loading || submitted}
                   >
-                    ⇅
+                    <ArrowDownUp size={16} />
                   </button>
                 </div>
 
                 <LocationInput
                   id="drop-location"
-                  label="🏁 Drop Location"
+                  label="Drop Location"
                   placeholder="Search or pick a drop location…"
                   value={form.to_location}
                   coords={form.drop_lat != null ? { lat: form.drop_lat, lng: form.drop_lng } : null}
@@ -459,9 +456,9 @@ export default function BookingFormPage() {
                   <span className="spinner spinner-sm" /> Booking…
                 </>
               ) : submitted ? (
-                '✅ Booked! Redirecting…'
+                <><CheckCircle size={18} /> Booked! Redirecting…</>
               ) : (
-                '📨 Submit Booking'
+                <><Send size={18} /> Submit Booking</>
               )}
             </button>
           </form>

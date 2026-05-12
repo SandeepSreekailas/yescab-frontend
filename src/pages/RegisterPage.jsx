@@ -52,9 +52,11 @@ export default function RegisterPage() {
     if (!form.email.trim()) errs.email = 'Email is required.'
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
       errs.email = 'Enter a valid email address.'
-    if (!form.phone.trim()) errs.phone = 'Phone number is required.'
-    else if (!/^[\d\s\-\+\(\)]{7,15}$/.test(form.phone))
-      errs.phone = 'Enter a valid phone number (7–15 digits).'
+    if (!form.phone.trim()) {
+      errs.phone = 'Phone number is required.'
+    } else if (!/^[6-9]\d{9}$/.test(form.phone)) {
+      errs.phone = 'Indian mobile numbers must be exactly 10 digits starting with 6, 7, 8, or 9.'
+    }
     if (!form.place.trim()) errs.place = 'City / Place is required.'
     if (!form.password) errs.password = 'Password is required.'
     else if (form.password.length < 8) errs.password = 'Password must be at least 8 characters.'
@@ -66,7 +68,13 @@ export default function RegisterPage() {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
-    setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
+    let finalValue = type === 'checkbox' ? checked : value
+
+    if (name === 'phone') {
+      finalValue = value.replace(/\D/g, '').slice(0, 10)
+    }
+
+    setForm((prev) => ({ ...prev, [name]: finalValue }))
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }))
     setApiError('')
   }
@@ -152,9 +160,21 @@ export default function RegisterPage() {
           <div className="form-grid">
             <div className="form-group">
               <label className="form-label" htmlFor="reg-phone">Phone Number</label>
-              <input id="reg-phone" type="tel" name="phone" className="form-control"
-                placeholder="+91 98765 43210" value={form.phone} onChange={handleChange}
-                autoComplete="tel" />
+              <div className="indian-phone-group">
+                <span className="indian-phone-prefix">+91</span>
+                <input
+                  id="reg-phone"
+                  type="tel"
+                  name="phone"
+                  className="indian-phone-input"
+                  placeholder="9876543210"
+                  pattern="[6-9][0-9]{9}"
+                  inputMode="numeric"
+                  value={form.phone}
+                  onChange={handleChange}
+                  autoComplete="tel"
+                />
+              </div>
               {errors.phone && <span className="form-error">{errors.phone}</span>}
             </div>
             <div className="form-group">

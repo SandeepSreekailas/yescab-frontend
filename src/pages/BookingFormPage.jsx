@@ -118,10 +118,10 @@ export default function BookingFormPage() {
     if (!form.trip_type) errs.trip_type = 'Please select a trip type.'
     if (!form.name.trim()) errs.name = 'Passenger name is required.'
 
-    if (!form.phone_number.trim()) errs.phone_number = 'Phone number is required.'
-    else {
-      const cleaned = form.phone_number.replace(/[\s\-\(\)\+]/g, '')
-      if (!/^\d{7,15}$/.test(cleaned)) errs.phone_number = 'Enter a valid phone number (7–15 digits).'
+    if (!form.phone_number.trim()) {
+      errs.phone_number = 'Phone number is required.'
+    } else if (!/^[6-9]\d{9}$/.test(form.phone_number)) {
+      errs.phone_number = 'Indian mobile numbers must be exactly 10 digits starting with 6, 7, 8, or 9.'
     }
 
     const people = Number(form.num_people)
@@ -158,7 +158,13 @@ export default function BookingFormPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
+    let finalValue = value
+
+    if (name === 'phone_number') {
+      finalValue = value.replace(/\D/g, '').slice(0, 10)
+    }
+
+    setForm((prev) => ({ ...prev, [name]: finalValue }))
 
     // Clear current field error
     const clearedErrors = { [name]: '' }
@@ -365,15 +371,20 @@ export default function BookingFormPage() {
               </div>
               <div className="form-group">
                 <label className="form-label" htmlFor="phone-number">Phone Number</label>
-                <input
-                  id="phone-number"
-                  type="tel"
-                  name="phone_number"
-                  className="form-control"
-                  placeholder="e.g. +91 9876543210"
-                  value={form.phone_number}
-                  onChange={handleChange}
-                />
+                <div className="indian-phone-group">
+                  <span className="indian-phone-prefix">+91</span>
+                  <input
+                    id="phone-number"
+                    type="tel"
+                    name="phone_number"
+                    className="indian-phone-input"
+                    placeholder="9876543210"
+                    pattern="[6-9][0-9]{9}"
+                    inputMode="numeric"
+                    value={form.phone_number}
+                    onChange={handleChange}
+                  />
+                </div>
                 {errors.phone_number && <span className="form-error">{errors.phone_number}</span>}
               </div>
             </div>

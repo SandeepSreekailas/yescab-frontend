@@ -218,10 +218,10 @@ export default function BookingFormPage() {
       await bookingsAPI.create(payload)
       setSuccess('Booking submitted! We will review and confirm shortly.')
       setSubmitted(true)
-      setForm(initialForm())
+      // Save last booking details to show WhatsApp button
+      setForm(prev => ({...initialForm(), _lastBooking: payload}))
       setErrors({})
-      // Auto-redirect after 2.5 s
-      setTimeout(() => navigate('/my-bookings'), 2500)
+      // No auto-redirect so they can click the WhatsApp button
     } catch (err) {
       const data = err.response?.data
       if (data) {
@@ -291,8 +291,38 @@ export default function BookingFormPage() {
           {user?.is_email_verified === false ? null : (<>
 
           {apiError && <div className="alert alert-error mb-2"><XCircle size={18} /> {apiError}</div>}
-          {success && <div className="alert alert-success mb-2"><CheckCircle size={18} /> {success} Redirecting to your bookings…</div>}
-
+          
+          {submitted ? (
+            <div className="card animate-fadeup" style={{ textAlign: 'center', padding: '3rem 2rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                <CheckCircle size={56} color="var(--success)" />
+              </div>
+              <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: 'var(--text)' }}>Booking Received!</h2>
+              <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
+                {success}
+              </p>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
+                <a 
+                  href={`https://wa.me/${import.meta.env.VITE_ADMIN_WHATSAPP_NUMBER || '919876543210'}?text=${encodeURIComponent(`Hi YesCab, I have successfully submitted a booking request for ${form._lastBooking?.date} from ${form._lastBooking?.from_location} to ${form._lastBooking?.to_location}.`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-primary"
+                  style={{ backgroundColor: '#25D366', color: '#fff', border: 'none', width: '100%', maxWidth: '300px' }}
+                >
+                  Notify on WhatsApp
+                </a>
+                
+                <button 
+                  className="btn btn-secondary" 
+                  onClick={() => navigate('/my-bookings')}
+                  style={{ width: '100%', maxWidth: '300px' }}
+                >
+                  View My Bookings
+                </button>
+              </div>
+            </div>
+          ) : (
           <form className="card animate-fadeup" onSubmit={handleSubmit} noValidate>
 
             {/* Trip Type */}
@@ -473,6 +503,7 @@ export default function BookingFormPage() {
               )}
             </button>
           </form>
+          )}
           </>)}
         </div>
       </div>

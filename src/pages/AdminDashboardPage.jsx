@@ -5,7 +5,7 @@ import StatusBadge from '../components/StatusBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
 import BookingCard from '../components/BookingCard'
 import BookingDetailModal from '../components/BookingDetailModal'
-import { Users, Package, Clock, CheckCircle, XCircle, Search, RefreshCw, Trash2, Mail, Phone, Calendar, AlertTriangle } from 'lucide-react'
+import { Users, Package, Clock, CheckCircle, XCircle, Search, RefreshCw, Trash2, Mail, Phone, Calendar, AlertTriangle, CarFront, Check } from 'lucide-react'
 
 // ── Sub-components ──────────────────────────────────────────
 
@@ -13,33 +13,40 @@ function StatsBar({ bookings, users }) {
   const total = bookings.length
   const pending = bookings.filter((b) => b.status === 'pending').length
   const approved = bookings.filter((b) => b.status === 'approved').length
+  const assigned = bookings.filter((b) => b.status === 'driver_assigned').length
+  const completed = bookings.filter((b) => b.status === 'completed').length
   const rejected = bookings.filter((b) => b.status === 'rejected').length
 
   return (
-    <div className="stats-grid">
+    <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' }}>
       <div className="stat-card">
-        <span className="stat-icon"><Users size={24} color="var(--text-muted)" /></span>
-        <span className="stat-value">{users.length}</span>
-        <span className="stat-label">Total Users</span>
+        <span className="stat-icon"><Users size={20} color="var(--text-muted)" /></span>
+        <span className="stat-value" style={{ fontSize: '1.5rem' }}>{users.length}</span>
+        <span className="stat-label">Users</span>
       </div>
       <div className="stat-card">
-        <span className="stat-icon"><Package size={24} color="var(--text-muted)" /></span>
-        <span className="stat-value">{total}</span>
-        <span className="stat-label">Total Bookings</span>
-      </div>
-      <div className="stat-card">
-        <span className="stat-icon"><Clock size={24} color="#fbbf24" /></span>
-        <span className="stat-value" style={{ color: '#fbbf24' }}>{pending}</span>
+        <span className="stat-icon"><Clock size={20} color="#fbbf24" /></span>
+        <span className="stat-value" style={{ color: '#fbbf24', fontSize: '1.5rem' }}>{pending}</span>
         <span className="stat-label">Pending</span>
       </div>
       <div className="stat-card">
-        <span className="stat-icon"><CheckCircle size={24} color="var(--success)" /></span>
-        <span className="stat-value" style={{ color: 'var(--success)' }}>{approved}</span>
+        <span className="stat-icon"><CheckCircle size={20} color="var(--success)" /></span>
+        <span className="stat-value" style={{ color: 'var(--success)', fontSize: '1.5rem' }}>{approved}</span>
         <span className="stat-label">Approved</span>
       </div>
       <div className="stat-card">
-        <span className="stat-icon"><XCircle size={24} color="var(--danger)" /></span>
-        <span className="stat-value" style={{ color: 'var(--danger)' }}>{rejected}</span>
+        <span className="stat-icon"><CarFront size={20} color="#60a5fa" /></span>
+        <span className="stat-value" style={{ color: '#60a5fa', fontSize: '1.5rem' }}>{assigned}</span>
+        <span className="stat-label">Assigned</span>
+      </div>
+      <div className="stat-card">
+        <span className="stat-icon"><Check size={20} color="var(--success)" /></span>
+        <span className="stat-value" style={{ color: 'var(--success)', fontSize: '1.5rem' }}>{completed}</span>
+        <span className="stat-label">Done</span>
+      </div>
+      <div className="stat-card">
+        <span className="stat-icon"><XCircle size={20} color="var(--danger)" /></span>
+        <span className="stat-value" style={{ color: 'var(--danger)', fontSize: '1.5rem' }}>{rejected}</span>
         <span className="stat-label">Rejected</span>
       </div>
     </div>
@@ -104,6 +111,8 @@ function BookingsTab({ bookings, loading, onStatusChange, onRefresh }) {
           <option value="">All Statuses</option>
           <option value="pending">Pending</option>
           <option value="approved">Approved</option>
+          <option value="driver_assigned">Driver Assigned</option>
+          <option value="completed">Completed</option>
           <option value="rejected">Rejected</option>
         </select>
         <select
@@ -157,6 +166,12 @@ function BookingsTab({ bookings, loading, onStatusChange, onRefresh }) {
       <BookingDetailModal
         booking={selectedBooking}
         onClose={() => setSelectedBooking(null)}
+        isAdmin={true}
+        onUpdate={async (status, note) => {
+          await adminAPI.updateBookingStatus(selectedBooking.id, { status, admin_note: note })
+          onStatusChange(selectedBooking.id, status, note)
+          setSelectedBooking(null)
+        }}
       />
     </div>
   )
@@ -420,11 +435,16 @@ export default function AdminDashboardPage() {
   }, [fetchBookings, fetchUsers])
 
   // Optimistic status update — avoids full refetch
-  const handleStatusChange = useCallback((bookingId, newStatus) => {
+  const handleStatusChange = useCallback((bookingId, newStatus, note = null) => {
     setBookings((prev) =>
-      prev.map((b) =>
-        b.id === bookingId ? { ...b, status: newStatus, status_display: capitalize(newStatus) } : b
-      )
+      prev.map((b) => {
+        if (b.id === bookingId) {
+          const updated = { ...b, status: newStatus, status_display: capitalize(newStatus) }
+          if (note !== null) updated.admin_note = note
+          return updated
+        }
+        return b
+      })
     )
   }, [])
 

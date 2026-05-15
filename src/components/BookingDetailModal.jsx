@@ -8,8 +8,10 @@ import { MapPin, Navigation, Map, Calendar, FileText, User, X } from 'lucide-rea
  * Props:
  *   booking  — the booking object to display (null = hidden)
  *   onClose  — () => void
+ *   isAdmin  — boolean
+ *   onUpdate — (status, note) => void
  */
-export default function BookingDetailModal({ booking, onClose }) {
+export default function BookingDetailModal({ booking, onClose, isAdmin, onUpdate }) {
   const overlayRef = useRef(null)
   const [mapError, setMapError] = useState(false)
 
@@ -66,6 +68,20 @@ export default function BookingDetailModal({ booking, onClose }) {
     const d = new Date()
     d.setHours(Number(h), Number(m))
     return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
+  }
+
+  const [localStatus, setLocalStatus] = useState(b.status)
+  const [localNote, setLocalNote] = useState(b.admin_note || '')
+
+  const getStatusLabel = (s) => {
+    const labels = {
+      pending: 'Pending',
+      approved: 'Approved',
+      driver_assigned: 'Driver Assigned',
+      completed: 'Completed',
+      rejected: 'Rejected'
+    }
+    return labels[s] || s
   }
 
   return (
@@ -176,11 +192,73 @@ export default function BookingDetailModal({ booking, onClose }) {
               </div>
             </div>
 
-            {/* Notes */}
+          {/* Notes */}
             {b.notes && (
               <div className="modal-detail-section">
                 <h4 className="modal-detail-heading" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><FileText size={16} /> Notes</h4>
                 <p className="modal-detail-notes">{b.notes}</p>
+              </div>
+            )}
+            {/* Admin Note */}
+            {b.admin_note && (
+              <div className="modal-detail-section">
+                <h4 className="modal-detail-heading" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--primary-dark)' }}><FileText size={16} /> Admin Note</h4>
+                <p className="modal-detail-notes" style={{ background: 'rgba(255, 204, 0, 0.1)', borderLeft: '3px solid var(--primary)' }}>{b.admin_note}</p>
+              </div>
+            )}
+            
+            {/* Admin Controls */}
+            {isAdmin && onUpdate && (
+              <div className="modal-detail-section" style={{ gridColumn: '1 / -1', background: 'var(--surface-2)', padding: '1rem', borderRadius: 'var(--radius)' }}>
+                <h4 className="modal-detail-heading" style={{ marginBottom: '0.75rem' }}>Update Status</h4>
+                <form 
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    onUpdate(localStatus, localNote);
+                  }}
+                  style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}
+                >
+                  <div style={{ display: 'flex', gap: '0.75rem' }}>
+                    <select 
+                      name="status" 
+                      value={localStatus} 
+                      onChange={(e) => setLocalStatus(e.target.value)}
+                      className="form-control" 
+                      style={{ flex: 1 }}
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="approved">Approved</option>
+                      <option value="driver_assigned">Driver Assigned</option>
+                      <option value="completed">Completed</option>
+                      <option value="rejected">Rejected</option>
+                    </select>
+                    <a 
+                      href={`https://wa.me/${b.phone_number.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi ${b.name}, your YesCab booking #${b.id} status is now ${getStatusLabel(localStatus)}.${localNote ? ` Note: ${localNote}` : ''}`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn btn-primary"
+                      style={{ backgroundColor: '#25D366', color: '#fff', border: 'none' }}
+                    >
+                      Reply on WhatsApp
+                    </a>
+                  </div>
+                  <textarea 
+                    name="admin_note" 
+                    value={localNote} 
+                    onChange={(e) => setLocalNote(e.target.value)}
+                    className="form-control" 
+                    placeholder="Add a note for the customer (e.g. 'Driver will arrive in 10 minutes')"
+                    rows={2}
+                  />
+                  <div style={{ display: 'flex', gap: '0.75rem' }}>
+                    <button type="submit" className="btn btn-primary btn-sm">
+                      Save Update
+                    </button>
+                    <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setLocalStatus(b.status); setLocalNote(b.admin_note || ''); }}>
+                      Reset
+                    </button>
+                  </div>
+                </form>
               </div>
             )}
           </div>

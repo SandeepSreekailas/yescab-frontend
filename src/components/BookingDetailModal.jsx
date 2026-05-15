@@ -14,6 +14,16 @@ import { MapPin, Navigation, Map, Calendar, FileText, User, X } from 'lucide-rea
 export default function BookingDetailModal({ booking, onClose, isAdmin, onUpdate }) {
   const overlayRef = useRef(null)
   const [mapError, setMapError] = useState(false)
+  const [localStatus, setLocalStatus] = useState('')
+  const [localNote, setLocalNote] = useState('')
+
+  // Sync local state when booking changes
+  useEffect(() => {
+    if (booking) {
+      setLocalStatus(booking.status || 'pending')
+      setLocalNote(booking.admin_note || '')
+    }
+  }, [booking])
 
   // Close on Escape key
   useEffect(() => {
@@ -69,9 +79,6 @@ export default function BookingDetailModal({ booking, onClose, isAdmin, onUpdate
     d.setHours(Number(h), Number(m))
     return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
   }
-
-  const [localStatus, setLocalStatus] = useState(b.status)
-  const [localNote, setLocalNote] = useState(b.admin_note || '')
 
   const getStatusLabel = (s) => {
     const labels = {

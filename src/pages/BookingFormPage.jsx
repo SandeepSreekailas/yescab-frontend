@@ -303,15 +303,21 @@ export default function BookingFormPage() {
               </p>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
-                <a 
-                  href={`https://wa.me/${import.meta.env.VITE_ADMIN_WHATSAPP_NUMBER || '919876543210'}?text=${encodeURIComponent(`Hi YesCab, I have successfully submitted a booking request for ${form._lastBooking?.date} from ${form._lastBooking?.from_location} to ${form._lastBooking?.to_location}.`)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn btn-primary"
-                  style={{ backgroundColor: '#25D366', color: '#fff', border: 'none', width: '100%', maxWidth: '300px' }}
-                >
-                  Notify on WhatsApp
-                </a>
+                {import.meta.env.VITE_ADMIN_WHATSAPP_NUMBER ? (
+                  <a 
+                    href={`https://wa.me/${import.meta.env.VITE_ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi YesCab, I have successfully submitted a booking request for ${form._lastBooking?.date} from ${form._lastBooking?.from_location} to ${form._lastBooking?.to_location}.`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-primary"
+                    style={{ backgroundColor: '#25D366', color: '#fff', border: 'none', width: '100%', maxWidth: '300px' }}
+                  >
+                    Notify on WhatsApp
+                  </a>
+                ) : (
+                  <div className="alert alert-info" style={{ fontSize: '0.82rem', width: '100%', maxWidth: '300px', justifyContent: 'center' }}>
+                    Admin contact details pending.
+                  </div>
+                )}
                 
                 <button 
                   className="btn btn-secondary" 

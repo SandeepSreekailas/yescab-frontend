@@ -16,9 +16,10 @@ function StatsBar({ bookings, users }) {
   const assigned = bookings.filter((b) => b.status === 'driver_assigned').length
   const completed = bookings.filter((b) => b.status === 'completed').length
   const rejected = bookings.filter((b) => b.status === 'rejected').length
+  const cancelled = bookings.filter((b) => b.status === 'cancelled').length
 
   return (
-    <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))' }}>
+    <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))' }}>
       <div className="stat-card">
         <span className="stat-icon"><Users size={20} color="var(--text-muted)" /></span>
         <span className="stat-value" style={{ fontSize: '1.5rem' }}>{users.length}</span>
@@ -31,13 +32,8 @@ function StatsBar({ bookings, users }) {
       </div>
       <div className="stat-card">
         <span className="stat-icon"><CheckCircle size={20} color="var(--success)" /></span>
-        <span className="stat-value" style={{ color: 'var(--success)', fontSize: '1.5rem' }}>{approved}</span>
-        <span className="stat-label">Approved</span>
-      </div>
-      <div className="stat-card">
-        <span className="stat-icon"><CarFront size={20} color="#60a5fa" /></span>
-        <span className="stat-value" style={{ color: '#60a5fa', fontSize: '1.5rem' }}>{assigned}</span>
-        <span className="stat-label">Assigned</span>
+        <span className="stat-value" style={{ color: 'var(--success)', fontSize: '1.5rem' }}>{approved + assigned}</span>
+        <span className="stat-label">Active</span>
       </div>
       <div className="stat-card">
         <span className="stat-icon"><Check size={20} color="var(--success)" /></span>
@@ -49,13 +45,18 @@ function StatsBar({ bookings, users }) {
         <span className="stat-value" style={{ color: 'var(--danger)', fontSize: '1.5rem' }}>{rejected}</span>
         <span className="stat-label">Rejected</span>
       </div>
+      <div className="stat-card">
+        <span className="stat-icon"><Package size={20} color="var(--text-faint)" /></span>
+        <span className="stat-value" style={{ color: 'var(--text-faint)', fontSize: '1.5rem' }}>{cancelled}</span>
+        <span className="stat-label">Cancelled</span>
+      </div>
     </div>
   )
 }
 
 // ── Bookings Tab (Card-based) ──────────────────────────────────
 
-function BookingsTab({ bookings, loading, onStatusChange, onRefresh }) {
+function BookingsTab({ bookings, vehicles, loading, onStatusChange, onRefresh }) {
   const [statusFilter, setStatusFilter] = useState('')
   const [tripFilter, setTripFilter] = useState('')
   const [search, setSearch] = useState('')
@@ -114,6 +115,7 @@ function BookingsTab({ bookings, loading, onStatusChange, onRefresh }) {
           <option value="driver_assigned">Driver Assigned</option>
           <option value="completed">Completed</option>
           <option value="rejected">Rejected</option>
+          <option value="cancelled">Cancelled</option>
         </select>
         <select
           id="admin-trip-filter"
@@ -155,7 +157,6 @@ function BookingsTab({ bookings, loading, onStatusChange, onRefresh }) {
               actionLoading={actionLoading}
               onApprove={(id) => handleStatus(id, 'approved')}
               onReject={(id) => handleStatus(id, 'rejected')}
-              onReset={(id) => handleStatus(id, 'pending')}
               onView={setSelectedBooking}
             />
           ))}
@@ -165,12 +166,26 @@ function BookingsTab({ bookings, loading, onStatusChange, onRefresh }) {
       {/* Detail Modal */}
       <BookingDetailModal
         booking={selectedBooking}
+        vehicles={vehicles}
         onClose={() => setSelectedBooking(null)}
         isAdmin={true}
-        onUpdate={async (status, note) => {
-          await adminAPI.updateBookingStatus(selectedBooking.id, { status, admin_note: note })
-          onStatusChange(selectedBooking.id, status, note)
-          setSelectedBooking(null)
+        onUpdate={async (newStatus, note, vehicle, rejectionReason) => {
+          try {
+            const payload = { status: newStatus, admin_note: note }
+            if (vehicle) payload.vehicle = vehicle
+            if (rejectionReason) payload.rejection_reason = rejectionReason
+            
+            await adminAPI.updateBookingStatus(selectedBooking.id, payload)
+            onStatusChange(selectedBooking.id, newStatus, note)
+            setSelectedBooking(null)
+          } catch (err) {
+            const msg = err.response?.data?.error
+              || err.response?.data?.status?.[0]
+              || err.response?.data?.vehicle?.[0]
+              || err.response?.data?.rejection_reason?.[0]
+              || 'Failed to update booking. The status transition may not be allowed.'
+            alert(msg)
+          }
         }}
       />
     </div>
@@ -401,6 +416,7 @@ export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState('bookings')
   const [bookings, setBookings] = useState([])
   const [users, setUsers] = useState([])
+  const [vehicles, setVehicles] = useState([])
   const [bookingsLoading, setBookingsLoading] = useState(true)
   const [usersLoading, setUsersLoading] = useState(true)
   const [fetchError, setFetchError] = useState('')
@@ -429,10 +445,20 @@ export default function AdminDashboardPage() {
     }
   }, [])
 
+  const fetchVehicles = useCallback(async () => {
+    try {
+      const res = await adminAPI.listVehicles()
+      setVehicles(res.data)
+    } catch {
+      console.error('Failed to load vehicles')
+    }
+  }, [])
+
   useEffect(() => {
     fetchBookings()
     fetchUsers()
-  }, [fetchBookings, fetchUsers])
+    fetchVehicles()
+  }, [fetchBookings, fetchUsers, fetchVehicles])
 
   // Optimistic status update — avoids full refetch
   const handleStatusChange = useCallback((bookingId, newStatus, note = null) => {
@@ -495,6 +521,7 @@ export default function AdminDashboardPage() {
         {activeTab === 'bookings' ? (
           <BookingsTab
             bookings={bookings}
+            vehicles={vehicles}
             loading={bookingsLoading}
             onStatusChange={handleStatusChange}
             onRefresh={fetchBookings}

@@ -5,7 +5,19 @@ import { useAuth } from '../context/AuthContext'
 import Navbar from '../components/Navbar'
 import LocationInput from '../components/LocationInput'
 
-import { Plane, PlaneTakeoff, Map, CarFront, CheckCircle, Send, ArrowDownUp, AlertCircle, XCircle } from 'lucide-react'
+import { 
+  Plane, 
+  PlaneTakeoff, 
+  Map, 
+  CarFront, 
+  CheckCircle, 
+  Send, 
+  ArrowDownUp, 
+  AlertCircle, 
+  XCircle,
+  FileText
+} from 'lucide-react'
+import BookingReceiptModal from '../components/BookingReceiptModal'
 
 const TRIP_TYPES = [
   { value: 'airport_pickup', label: 'Airport Pickup' },
@@ -62,6 +74,7 @@ export default function BookingFormPage() {
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [showReceipt, setShowReceipt] = useState(false)
 
   // Ref-based guard: prevents duplicate API calls even if React state batching is slow
   const isSubmittingRef = useRef(false)
@@ -149,8 +162,12 @@ export default function BookingFormPage() {
     // ── Time validation ──
     if (!form.time) {
       errs.time = 'Pickup time is required.'
-    } else if (form.date === today && form.time < currentTime) {
-      errs.time = 'Cannot select a past time. Please pick a later time.'
+    } else if (form.date) {
+      const journeyDT = new Date(`${form.date}T${form.time}`)
+      const minAllowedDT = new Date(new Date().getTime() + 60 * 60 * 1000)
+      if (journeyDT < minAllowedDT) {
+        errs.time = 'Bookings must be made at least 1 hour before journey time.'
+      }
     }
 
     return errs
@@ -215,11 +232,12 @@ export default function BookingFormPage() {
         drop_lat: form.drop_lat,
         drop_lng: form.drop_lng,
       }
-      await bookingsAPI.create(payload)
+      const res = await bookingsAPI.create(payload)
+      const newBooking = res.data.booking
       setSuccess('Booking submitted! We will review and confirm shortly.')
       setSubmitted(true)
-      // Save last booking details to show WhatsApp button
-      setForm(prev => ({...initialForm(), _lastBooking: payload}))
+      // Save last booking details for receipt and WhatsApp
+      setForm(prev => ({...initialForm(), _lastBooking: newBooking}))
       setErrors({})
       // No auto-redirect so they can click the WhatsApp button
     } catch (err) {
@@ -290,6 +308,18 @@ export default function BookingFormPage() {
 
           {user?.is_email_verified === false ? null : (<>
 
+          {/* Booking Warning System */}
+          <div className="alert alert-info mb-2" style={{ borderLeft: '4px solid var(--info)', background: 'var(--surface-2)', color: 'var(--text-muted)' }}>
+            <h4 style={{ margin: '0 0 0.5rem 0', display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.95rem', color: 'var(--text)' }}>
+              <AlertCircle size={16} color="var(--info)" /> Booking Guidelines
+            </h4>
+            <ul style={{ margin: 0, paddingLeft: '1.5rem', fontSize: '0.85rem', lineHeight: 1.6 }}>
+              <li>Bookings must be placed <strong>at least 1 hour</strong> before journey time.</li>
+              <li>Bookings are subject to vehicle availability.</li>
+              <li>Unconfirmed bookings may be automatically rejected after 1 hour.</li>
+            </ul>
+          </div>
+
           {apiError && <div className="alert alert-error mb-2"><XCircle size={18} /> {apiError}</div>}
           
           {submitted ? (
@@ -321,10 +351,18 @@ export default function BookingFormPage() {
                 
                 <button 
                   className="btn btn-secondary" 
+                  onClick={() => setShowReceipt(true)}
+                  style={{ width: '100%', maxWidth: '300px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
+                >
+                  <FileText size={18} /> View Receipt
+                </button>
+
+                <button 
+                  className="btn btn-ghost" 
                   onClick={() => navigate('/my-bookings')}
                   style={{ width: '100%', maxWidth: '300px' }}
                 >
-                  View My Bookings
+                  Go to My Bookings
                 </button>
               </div>
             </div>
@@ -513,6 +551,13 @@ export default function BookingFormPage() {
           </>)}
         </div>
       </div>
+
+      {showReceipt && form._lastBooking && (
+        <BookingReceiptModal 
+          booking={form._lastBooking} 
+          onClose={() => setShowReceipt(false)} 
+        />
+      )}
     </>
   )
 }

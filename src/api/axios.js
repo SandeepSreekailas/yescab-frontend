@@ -130,6 +130,7 @@ export const bookingsAPI = {
   create: (data) => api.post('/bookings/', data),
   list: () => api.get('/bookings/'),
   detail: (id) => api.get(`/bookings/${id}/`),
+  cancel: (id) => api.post(`/bookings/${id}/cancel/`),
 }
 
 // ── Admin API ──
@@ -137,6 +138,7 @@ export const adminAPI = {
   // Bookings
   listAllBookings: (params) => api.get('/bookings/admin/all/', { params }),
   updateBookingStatus: (id, data) => api.patch(`/bookings/admin/${id}/status/`, data),
+  listVehicles: () => api.get('/bookings/admin/vehicles/'),
 
   // Users
   listUsers: (params) => api.get('/auth/admin/users/', { params }),

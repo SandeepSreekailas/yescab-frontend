@@ -52,8 +52,9 @@ export default function DashboardPage() {
         setStats({
           total: bookings.length,
           pending: bookings.filter((b) => b.status === 'pending').length,
-          approved: bookings.filter((b) => b.status === 'approved').length,
+          approved: bookings.filter((b) => b.status === 'approved').length + bookings.filter((b) => b.status === 'driver_assigned').length,
           rejected: bookings.filter((b) => b.status === 'rejected').length,
+          cancelled: bookings.filter((b) => b.status === 'cancelled').length,
         })
       } catch {
         // Non-critical — dashboard still renders without stats
@@ -134,6 +135,13 @@ export default function DashboardPage() {
               </span>
               <span className="stat-label">Rejected</span>
             </div>
+            <div className="stat-card">
+              <span className="stat-icon"><Clock size={24} color="var(--text-faint)" /></span>
+              <span className="stat-value" style={{ color: 'var(--text-faint)' }}>
+                {loading ? '—' : stats.cancelled}
+              </span>
+              <span className="stat-label">Cancelled</span>
+            </div>
           </div>
         )}
 
@@ -171,18 +179,18 @@ export default function DashboardPage() {
             {loading ? (
               <LoadingSpinner text="Loading your bookings…" />
             ) : recentBookings.length === 0 ? (
-              <div className="card" style={{ textAlign: 'center', padding: '2.5rem' }}>
+              <div className="empty-state-card" style={{ padding: '2.5rem', textAlign: 'center', background: 'var(--surface-2)', borderRadius: 'var(--radius)', border: '1px dashed var(--border)' }}>
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
-                  <CarFront size={48} color="var(--text-muted)" />
+                  <CarFront size={48} color="var(--text-faint)" />
                 </div>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '1rem' }}>
-                  No bookings yet. Make your first ride today!
+                <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
+                  No recent bookings. Start your journey with YesCab today!
                 </p>
                 <button
                   className="btn btn-primary"
                   onClick={() => navigate('/book')}
                 >
-                  Book Now
+                  Book Your First Cab
                 </button>
               </div>
             ) : (

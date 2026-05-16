@@ -3,6 +3,7 @@ import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminRoute from './components/AdminRoute'
 
+import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
@@ -14,27 +15,31 @@ import DashboardPage from './pages/DashboardPage'
 import BookingFormPage from './pages/BookingFormPage'
 import BookingHistoryPage from './pages/BookingHistoryPage'
 import AdminDashboardPage from './pages/AdminDashboardPage'
+import UserLayout from './components/UserLayout'
 
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
+          {/* Landing page — public home */}
+          <Route path="/" element={<LandingPage />} />
+
           {/* Public routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
-          <Route path="/privacy" element={<PrivacyPolicyPage />} />
-          <Route path="/terms" element={<TermsOfServicePage />} />
+          <Route path="/privacy" element={<UserLayout><PrivacyPolicyPage /></UserLayout>} />
+          <Route path="/terms" element={<UserLayout><TermsOfServicePage /></UserLayout>} />
 
           {/* Protected user routes */}
           <Route
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <DashboardPage />
+                <UserLayout><DashboardPage /></UserLayout>
               </ProtectedRoute>
             }
           />
@@ -42,7 +47,7 @@ export default function App() {
             path="/book"
             element={
               <ProtectedRoute>
-                <BookingFormPage />
+                <UserLayout><BookingFormPage /></UserLayout>
               </ProtectedRoute>
             }
           />
@@ -50,7 +55,7 @@ export default function App() {
             path="/my-bookings"
             element={
               <ProtectedRoute>
-                <BookingHistoryPage />
+                <UserLayout><BookingHistoryPage /></UserLayout>
               </ProtectedRoute>
             }
           />
@@ -65,11 +70,11 @@ export default function App() {
             }
           />
 
-          {/* Fallback redirects */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
   )
 }
+

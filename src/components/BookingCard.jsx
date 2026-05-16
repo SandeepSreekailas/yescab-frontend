@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import StatusBadge from './StatusBadge'
 
-import { Plane, PlaneTakeoff, Map, CarFront, Clock, Users, Calendar, Eye, CheckCircle, XCircle, RotateCcw } from 'lucide-react'
+import { Plane, PlaneTakeoff, Map, CarFront, Clock, Users, Calendar, Eye, CheckCircle, XCircle, Ban } from 'lucide-react'
 
 const TRIP_ICONS = {
   airport_pickup: <Plane size={16} />,
@@ -30,30 +30,30 @@ function formatTime(t) {
   return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
 }
 
+// States where admin cannot take action
+const FINALIZED = new Set(['completed', 'rejected', 'cancelled'])
+
 /**
  * BookingCard — compact card for the admin booking list.
- *
- * Props:
- *   booking        — booking object from API
- *   actionLoading  — ID of the booking currently being acted on
- *   onApprove      — (id) => void
- *   onReject       — (id) => void
- *   onReset        — (id) => void
- *   onView         — (booking) => void  — opens the detail modal
+ * State-aware: disables all action buttons on finalized bookings.
  */
-export default function BookingCard({ booking: b, actionLoading, onApprove, onReject, onReset, onView }) {
+export default function BookingCard({ booking: b, actionLoading, onApprove, onReject, onView }) {
   const icon = TRIP_ICONS[b.trip_type] || <CarFront size={16} />
+  const isFinalized = FINALIZED.has(b.status)
 
   const statusAccent = useMemo(() => {
-    if (b.status === 'pending')  return 'rgba(245,158,11,0.25)'
-    if (b.status === 'approved') return 'rgba(34,197,94,0.25)'
-    if (b.status === 'rejected') return 'rgba(239,68,68,0.25)'
+    if (b.status === 'pending')         return 'rgba(245,158,11,0.25)'
+    if (b.status === 'approved')        return 'rgba(34,197,94,0.25)'
+    if (b.status === 'driver_assigned') return 'rgba(59,130,246,0.25)'
+    if (b.status === 'completed')       return 'rgba(34,197,94,0.25)'
+    if (b.status === 'rejected')        return 'rgba(239,68,68,0.25)'
+    if (b.status === 'cancelled')       return 'rgba(156,163,175,0.25)'
     return 'var(--border)'
   }, [b.status])
 
   return (
     <div
-      className="booking-card"
+      className={`booking-card ${isFinalized ? 'booking-card--finalized' : ''}`}
       style={{ borderTopColor: statusAccent }}
     >
       {/* Top row: ID + Status */}
@@ -99,6 +99,18 @@ export default function BookingCard({ booking: b, actionLoading, onApprove, onRe
         <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}><Users size={16} /> {b.num_people}</span>
       </div>
 
+      {/* Cancelled by customer notice */}
+      {b.status === 'cancelled' && (
+        <div className="booking-card-cancelled-notice">
+          <Ban size={14} /> Cancelled by customer
+          {b.cancelled_at && (
+            <span style={{ marginLeft: 'auto', fontSize: '0.72rem', color: 'var(--text-faint)' }}>
+              {new Date(b.cancelled_at).toLocaleString('en-IN', { dateStyle: 'short', timeStyle: 'short' })}
+            </span>
+          )}
+        </div>
+      )}
+
       {/* Actions */}
       <div className="booking-card-actions">
         <button
@@ -110,41 +122,33 @@ export default function BookingCard({ booking: b, actionLoading, onApprove, onRe
           <Eye size={14} /> View
         </button>
 
-        {b.status !== 'approved' && (
-          <button
-            id={`approve-booking-${b.id}`}
-            className="btn btn-success btn-sm"
-            onClick={() => onApprove(b.id)}
-            disabled={actionLoading === b.id}
-            style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}
-          >
-            {actionLoading === b.id ? <span className="spinner spinner-sm" /> : <><CheckCircle size={14} /> Approve</>}
-          </button>
+        {!isFinalized && b.status === 'pending' && (
+          <>
+            <button
+              id={`approve-booking-${b.id}`}
+              className="btn btn-success btn-sm"
+              onClick={() => onApprove(b.id)}
+              disabled={actionLoading === b.id}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+            >
+              {actionLoading === b.id ? <span className="spinner spinner-sm" /> : <><CheckCircle size={14} /> Approve</>}
+            </button>
+            <button
+              id={`reject-booking-${b.id}`}
+              className="btn btn-danger btn-sm"
+              onClick={() => onReject(b.id)}
+              disabled={actionLoading === b.id}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}
+            >
+              {actionLoading === b.id ? <span className="spinner spinner-sm" /> : <><XCircle size={14} /> Reject</>}
+            </button>
+          </>
         )}
 
-        {b.status !== 'rejected' && (
-          <button
-            id={`reject-booking-${b.id}`}
-            className="btn btn-danger btn-sm"
-            onClick={() => onReject(b.id)}
-            disabled={actionLoading === b.id}
-            style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}
-          >
-            {actionLoading === b.id ? <span className="spinner spinner-sm" /> : <><XCircle size={14} /> Reject</>}
-          </button>
-        )}
-
-        {b.status !== 'pending' && (
-          <button
-            id={`reset-booking-${b.id}`}
-            className="btn btn-ghost btn-sm"
-            onClick={() => onReset(b.id)}
-            disabled={actionLoading === b.id}
-            title="Reset to Pending"
-            style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}
-          >
-            <RotateCcw size={14} /> Reset
-          </button>
+        {isFinalized && (
+          <span className="booking-card-locked" title="This booking is finalized and cannot be modified">
+            No actions available
+          </span>
         )}
       </div>
     </div>

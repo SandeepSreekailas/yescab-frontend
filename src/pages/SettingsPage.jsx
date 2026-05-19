@@ -91,7 +91,7 @@ export default function SettingsPage() {
                 onChange={(e) => setProfileForm({...profileForm, name: e.target.value})}
               />
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="form-grid" style={{ gap: '1rem' }}>
               <div className="form-group">
                 <label className="form-label">Phone Number</label>
                 <input
@@ -176,7 +176,7 @@ export default function SettingsPage() {
                 onChange={(e) => setPwdForm({...pwdForm, old_password: e.target.value})}
               />
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="form-grid" style={{ gap: '1rem' }}>
               <div className="form-group">
                 <label className="form-label">New Password</label>
                 <input

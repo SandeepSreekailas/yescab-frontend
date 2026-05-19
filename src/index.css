@@ -531,6 +531,13 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
 .stat-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -615,6 +622,7 @@ tbody td {
   border-bottom: 1px solid var(--border);
   color: var(--text);
   vertical-align: middle;
+  white-space: nowrap;
 }
 
 tbody tr:last-child td {
@@ -1032,17 +1040,12 @@ tbody tr:hover td {
   padding: 0.35rem;
 }
 
-.navbar-mobile {
+.navbar-mobile-backdrop {
   display: none;
-  flex-direction: column;
-  gap: 0.25rem;
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  padding: 1rem 1.5rem;
 }
 
-.navbar-mobile.open {
-  display: flex;
+.navbar-mobile {
+  display: none;
 }
 
 .navbar-mobile a,
@@ -1075,6 +1078,58 @@ tbody tr:hover td {
   }
   .navbar-hamburger {
     display: block;
+  }
+  
+  .navbar-mobile-backdrop {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 9998;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  
+  .navbar-mobile-backdrop.open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .navbar-mobile {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 280px;
+    height: 100vh;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    padding: 1.5rem;
+    z-index: 9999;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    gap: 0.25rem;
+    overflow-y: auto;
+    box-shadow: -4px 0 24px rgba(0,0,0,0.1);
+  }
+
+  .navbar-mobile.open {
+    transform: translateX(0);
+  }
+
+  .navbar-mobile-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 1.5rem;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
   }
 }
 
@@ -1205,8 +1260,20 @@ tbody tr:hover td {
 
 .booking-card-body {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.65rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem 0.65rem;
+}
+
+@media (max-width: 768px) {
+  .booking-card-body {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .booking-card-body {
+    grid-template-columns: 1fr;
+  }
 }
 
 .booking-detail {
@@ -2136,6 +2203,12 @@ tbody tr:hover td {
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
   margin-bottom: 1.5rem;
+}
+
+@media (max-width: 500px) {
+  .receipt-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .receipt-item {

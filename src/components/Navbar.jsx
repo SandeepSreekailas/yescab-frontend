@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { Home, CarFront, ClipboardList, Settings, LogOut, Menu, X } from 'lucide-react'
@@ -7,6 +7,18 @@ export default function Navbar() {
   const { user, isAdmin, logout } = useAuth()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+
+  // Scroll lock when mobile drawer is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [menuOpen])
 
   const handleLogout = async () => {
     setMenuOpen(false)
@@ -92,8 +104,22 @@ export default function Navbar() {
         </button>
       </nav>
 
+      {/* Mobile Backdrop */}
+      <div 
+        className={`navbar-mobile-backdrop ${menuOpen ? 'open' : ''}`}
+        onClick={closeMenu}
+      />
+
       {/* Mobile drawer */}
       <div className={`navbar-mobile ${menuOpen ? 'open' : ''}`}>
+        <div className="navbar-mobile-header">
+          <div className="navbar-logo" style={{ fontSize: '1.2rem', width: '32px', height: '32px' }}>Y</div>
+          <span className="navbar-name" style={{ fontSize: '1.2rem' }}>Yes<span>Cab</span></span>
+          <button className="navbar-hamburger" onClick={closeMenu} style={{ marginLeft: 'auto' }}>
+            <X size={24} />
+          </button>
+        </div>
+        
         <NavLink to="/dashboard" onClick={closeMenu} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <Home size={20} /> Dashboard
         </NavLink>

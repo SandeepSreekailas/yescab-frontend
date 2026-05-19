@@ -16,7 +16,7 @@ function StatsBar({ stats }) {
   const { users, pending, approved, driver_assigned, completed, rejected, cancelled } = stats;
 
   return (
-    <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))' }}>
+    <div className="stats-grid">
       <div className="stat-card">
         <span className="stat-icon"><Users size={20} color="var(--text-muted)" /></span>
         <span className="stat-value" style={{ fontSize: '1.5rem' }}>{users}</span>

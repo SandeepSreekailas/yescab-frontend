@@ -235,7 +235,7 @@ export default function BookingHistoryPage() {
                   )}
 
                   {/* Card Body */}
-                  <div className="booking-card-body" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+                  <div className="booking-card-body">
                     <div className="booking-detail">
                       <span className="booking-detail-label">From</span>
                       <span className="booking-detail-value">{b.from_location}</span>

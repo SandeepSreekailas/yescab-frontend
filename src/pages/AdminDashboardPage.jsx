@@ -57,7 +57,6 @@ function BookingsTab({ bookings, vehicles, count, currentPage, loading, onStatus
   const [statusFilter, setStatusFilter] = useState('')
   const [tripFilter, setTripFilter] = useState('')
   const [search, setSearch] = useState('')
-  const [actionLoading, setActionLoading] = useState(null)
   const [selectedBooking, setSelectedBooking] = useState(null)
 
   // Trigger search/filter from backend when inputs change (with simple debounce on search)
@@ -67,21 +66,6 @@ function BookingsTab({ bookings, vehicles, count, currentPage, loading, onStatus
     }, 300)
     return () => clearTimeout(handler)
   }, [statusFilter, tripFilter, search, fetchBookings])
-
-  const handleStatus = async (bookingId, newStatus) => {
-    setActionLoading(bookingId)
-    try {
-      await adminAPI.updateBookingStatus(bookingId, { status: newStatus })
-      onStatusChange(bookingId, newStatus)
-    } catch (err) {
-      alert(
-        err.response?.data?.error ||
-          `Failed to ${newStatus} booking #${bookingId}. Please try again.`
-      )
-    } finally {
-      setActionLoading(null)
-    }
-  }
 
   return (
     <div>
@@ -145,9 +129,6 @@ function BookingsTab({ bookings, vehicles, count, currentPage, loading, onStatus
             <BookingCard
               key={b.id}
               booking={b}
-              actionLoading={actionLoading}
-              onApprove={(id) => handleStatus(id, 'approved')}
-              onReject={(id) => handleStatus(id, 'rejected')}
               onView={setSelectedBooking}
             />
           ))}

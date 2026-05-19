@@ -37,7 +37,7 @@ const FINALIZED = new Set(['completed', 'rejected', 'cancelled'])
  * BookingCard — compact card for the admin booking list.
  * State-aware: disables all action buttons on finalized bookings.
  */
-export default function BookingCard({ booking: b, actionLoading, onApprove, onReject, onView }) {
+export default function BookingCard({ booking: b, onView }) {
   const icon = TRIP_ICONS[b.trip_type] || <CarFront size={16} />
   const isFinalized = FINALIZED.has(b.status)
 
@@ -123,26 +123,9 @@ export default function BookingCard({ booking: b, actionLoading, onApprove, onRe
         </button>
 
         {!isFinalized && b.status === 'pending' && (
-          <>
-            <button
-              id={`approve-booking-${b.id}`}
-              className="btn btn-success btn-sm"
-              onClick={() => onApprove(b.id)}
-              disabled={actionLoading === b.id}
-              style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}
-            >
-              {actionLoading === b.id ? <span className="spinner spinner-sm" /> : <><CheckCircle size={14} /> Approve</>}
-            </button>
-            <button
-              id={`reject-booking-${b.id}`}
-              className="btn btn-danger btn-sm"
-              onClick={() => onReject(b.id)}
-              disabled={actionLoading === b.id}
-              style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}
-            >
-              {actionLoading === b.id ? <span className="spinner spinner-sm" /> : <><XCircle size={14} /> Reject</>}
-            </button>
-          </>
+          <span className="booking-card-locked" style={{ color: 'var(--text-muted)' }}>
+            Requires admin action
+          </span>
         )}
 
         {isFinalized && (

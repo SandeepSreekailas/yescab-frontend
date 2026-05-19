@@ -45,19 +45,25 @@ export default function DashboardPage() {
     let isMounted = true
     ;(async () => {
       try {
-        const res = await bookingsAPI.list()
-        const bookings = res.data
+        const [bookingsRes, statsRes] = await Promise.all([
+          bookingsAPI.list({ page: 1 }),
+          bookingsAPI.getStats()
+        ])
         if (!isMounted) return
+        
+        // Due to pagination, list() returns { results: [...] }
+        const bookings = bookingsRes.data.results || []
         setRecentBookings(bookings.slice(0, 3))
+        
         setStats({
-          total: bookings.length,
-          pending: bookings.filter((b) => b.status === 'pending').length,
-          approved: bookings.filter((b) => b.status === 'approved').length + bookings.filter((b) => b.status === 'driver_assigned').length,
-          rejected: bookings.filter((b) => b.status === 'rejected').length,
-          cancelled: bookings.filter((b) => b.status === 'cancelled').length,
+          total: statsRes.data.total_bookings,
+          pending: statsRes.data.pending,
+          approved: statsRes.data.approved + statsRes.data.driver_assigned,
+          rejected: statsRes.data.rejected,
+          cancelled: statsRes.data.cancelled,
         })
-      } catch {
-        // Non-critical — dashboard still renders without stats
+      } catch (err) {
+        console.error('Failed to load dashboard data', err)
       } finally {
         if (isMounted) setLoading(false)
       }

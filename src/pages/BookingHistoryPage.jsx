@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar'
 import StatusBadge from '../components/StatusBadge'
 import LoadingSpinner from '../components/LoadingSpinner'
 import BookingReceiptModal from '../components/BookingReceiptModal'
+import Pagination from '../components/Pagination'
 import {
   RefreshCw, CarFront, AlertTriangle, FileText, Trash2, ShieldAlert,
   Clock, CheckCircle, Ban, XCircle, Check, Info
@@ -45,19 +46,28 @@ export default function BookingHistoryPage() {
   const [showCancelConfirm, setShowCancelConfirm] = useState(null)
   const [expandedTimeline, setExpandedTimeline] = useState(null)
 
-  const fetchBookings = useCallback(async () => {
+  const [count, setCount] = useState(0)
+  const [currentPage, setCurrentPage] = useState(1)
+
+  const fetchBookings = useCallback(async (page = 1) => {
     setLoading(true)
     setError('')
     try {
-      const res = await bookingsAPI.list()
-      setBookings(res.data)
-      setFilteredBookings(res.data)
+      const params = { page }
+      if (statusFilter) params.status = statusFilter
+      
+      const res = await bookingsAPI.list(params)
+      // DRF PageNumberPagination returns { count, next, previous, results }
+      setBookings(res.data.results || [])
+      setFilteredBookings(res.data.results || [])
+      setCount(res.data.count || 0)
+      setCurrentPage(page)
     } catch {
       setError('Failed to load your bookings. Please try again.')
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [statusFilter])
 
   const handleCancelBooking = async (id) => {
     setCancellingId(id)
@@ -73,16 +83,8 @@ export default function BookingHistoryPage() {
   }
 
   useEffect(() => {
-    fetchBookings()
-  }, [fetchBookings])
-
-  useEffect(() => {
-    if (!statusFilter) {
-      setFilteredBookings(bookings)
-    } else {
-      setFilteredBookings(bookings.filter((b) => b.status === statusFilter))
-    }
-  }, [statusFilter, bookings])
+    fetchBookings(1)
+  }, [fetchBookings, statusFilter])
 
   const formatDate = (dateStr) =>
     new Date(dateStr).toLocaleDateString('en-IN', {
@@ -131,8 +133,8 @@ export default function BookingHistoryPage() {
           <div>
             <h1 className="page-title">My Bookings</h1>
             <p className="page-subtitle">
-              {bookings.length > 0
-                ? `${bookings.length} booking${bookings.length > 1 ? 's' : ''} found`
+              {count > 0
+                ? `${count} booking${count > 1 ? 's' : ''} found`
                 : 'Your booking history will appear here.'}
             </p>
           </div>
@@ -150,7 +152,7 @@ export default function BookingHistoryPage() {
             <button
               id="refresh-bookings-btn"
               className="btn btn-secondary btn-sm"
-              onClick={fetchBookings}
+              onClick={() => fetchBookings(currentPage)}
               disabled={loading}
               title="Refresh"
               style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
@@ -170,7 +172,7 @@ export default function BookingHistoryPage() {
         {error && (
           <div className="alert alert-error mb-2" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <AlertTriangle size={18} /> {error}
-            <button className="btn btn-ghost btn-sm" onClick={fetchBookings} style={{ marginLeft: '1rem' }}>
+            <button className="btn btn-ghost btn-sm" onClick={() => fetchBookings(currentPage)} style={{ marginLeft: '1rem' }}>
               Retry
             </button>
           </div>
@@ -339,6 +341,13 @@ export default function BookingHistoryPage() {
                 </div>
               )
             })}
+            
+            <Pagination 
+              count={count} 
+              pageSize={50} 
+              currentPage={currentPage} 
+              onPageChange={(p) => fetchBookings(p)} 
+            />
           </div>
         )}
       </div>

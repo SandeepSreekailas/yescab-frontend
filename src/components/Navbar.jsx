@@ -57,6 +57,11 @@ export default function Navbar() {
               </li>
             </>
           )}
+          <li>
+            <NavLink to="/settings" className={({ isActive }) => (isActive ? 'active' : '')} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <Settings size={18} /> Settings
+            </NavLink>
+          </li>
           {isAdmin && (
             <li>
               <NavLink to="/admin" className={({ isActive }) => (isActive ? 'active' : '')} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
@@ -102,6 +107,9 @@ export default function Navbar() {
             </NavLink>
           </>
         )}
+        <NavLink to="/settings" onClick={closeMenu} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Settings size={20} /> Settings
+        </NavLink>
         {isAdmin && (
           <NavLink to="/admin" onClick={closeMenu} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Settings size={20} /> Admin

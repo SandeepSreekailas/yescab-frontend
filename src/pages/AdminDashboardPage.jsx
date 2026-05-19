@@ -7,22 +7,19 @@ import BookingCard from '../components/BookingCard'
 import BookingDetailModal from '../components/BookingDetailModal'
 import { Users, Package, Clock, CheckCircle, XCircle, Search, RefreshCw, Trash2, Mail, Phone, Calendar, AlertTriangle, CarFront, Check } from 'lucide-react'
 
+import Pagination from '../components/Pagination'
+
 // ── Sub-components ──────────────────────────────────────────
 
-function StatsBar({ bookings, users }) {
-  const total = bookings.length
-  const pending = bookings.filter((b) => b.status === 'pending').length
-  const approved = bookings.filter((b) => b.status === 'approved').length
-  const assigned = bookings.filter((b) => b.status === 'driver_assigned').length
-  const completed = bookings.filter((b) => b.status === 'completed').length
-  const rejected = bookings.filter((b) => b.status === 'rejected').length
-  const cancelled = bookings.filter((b) => b.status === 'cancelled').length
+function StatsBar({ stats }) {
+  if (!stats) return null;
+  const { users, pending, approved, driver_assigned, completed, rejected, cancelled } = stats;
 
   return (
     <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))' }}>
       <div className="stat-card">
         <span className="stat-icon"><Users size={20} color="var(--text-muted)" /></span>
-        <span className="stat-value" style={{ fontSize: '1.5rem' }}>{users.length}</span>
+        <span className="stat-value" style={{ fontSize: '1.5rem' }}>{users}</span>
         <span className="stat-label">Users</span>
       </div>
       <div className="stat-card">
@@ -32,7 +29,7 @@ function StatsBar({ bookings, users }) {
       </div>
       <div className="stat-card">
         <span className="stat-icon"><CheckCircle size={20} color="var(--success)" /></span>
-        <span className="stat-value" style={{ color: 'var(--success)', fontSize: '1.5rem' }}>{approved + assigned}</span>
+        <span className="stat-value" style={{ color: 'var(--success)', fontSize: '1.5rem' }}>{approved + driver_assigned}</span>
         <span className="stat-label">Active</span>
       </div>
       <div className="stat-card">
@@ -56,25 +53,20 @@ function StatsBar({ bookings, users }) {
 
 // ── Bookings Tab (Card-based) ──────────────────────────────────
 
-function BookingsTab({ bookings, vehicles, loading, onStatusChange, onRefresh }) {
+function BookingsTab({ bookings, vehicles, count, currentPage, loading, onStatusChange, onRefresh, fetchBookings }) {
   const [statusFilter, setStatusFilter] = useState('')
   const [tripFilter, setTripFilter] = useState('')
   const [search, setSearch] = useState('')
   const [actionLoading, setActionLoading] = useState(null)
-  const [selectedBooking, setSelectedBooking] = useState(null) // for modal
+  const [selectedBooking, setSelectedBooking] = useState(null)
 
-  const filtered = bookings.filter((b) => {
-    const matchStatus = !statusFilter || b.status === statusFilter
-    const matchTrip = !tripFilter || b.trip_type === tripFilter
-    const matchSearch =
-      !search ||
-      b.name.toLowerCase().includes(search.toLowerCase()) ||
-      b.user_info?.email.toLowerCase().includes(search.toLowerCase()) ||
-      b.from_location.toLowerCase().includes(search.toLowerCase()) ||
-      b.to_location.toLowerCase().includes(search.toLowerCase()) ||
-      (b.phone_number || '').includes(search)
-    return matchStatus && matchTrip && matchSearch
-  })
+  // Trigger search/filter from backend when inputs change (with simple debounce on search)
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      fetchBookings(1, { status: statusFilter, trip_type: tripFilter, search })
+    }, 300)
+    return () => clearTimeout(handler)
+  }, [statusFilter, tripFilter, search, fetchBookings])
 
   const handleStatus = async (bookingId, newStatus) => {
     setActionLoading(bookingId)
@@ -136,13 +128,12 @@ function BookingsTab({ bookings, vehicles, loading, onStatusChange, onRefresh })
 
       {/* Count */}
       <p style={{ color: 'var(--text-muted)', fontSize: '0.83rem', marginBottom: '1rem' }}>
-        Showing <strong style={{ color: 'var(--text)' }}>{filtered.length}</strong> of{' '}
-        {bookings.length} bookings
+        Found <strong style={{ color: 'var(--text)' }}>{count}</strong> matching bookings
       </p>
 
       {loading ? (
         <LoadingSpinner text="Loading bookings…" />
-        ) : filtered.length === 0 ? (
+        ) : bookings.length === 0 ? (
           <div className="empty-state card">
             <div className="empty-icon"><Search size={32} color="var(--text-muted)" /></div>
             <div className="empty-title">No bookings found</div>
@@ -150,7 +141,7 @@ function BookingsTab({ bookings, vehicles, loading, onStatusChange, onRefresh })
           </div>
         ) : (
         <div className="booking-cards-grid">
-          {filtered.map((b) => (
+          {bookings.map((b) => (
             <BookingCard
               key={b.id}
               booking={b}
@@ -161,6 +152,15 @@ function BookingsTab({ bookings, vehicles, loading, onStatusChange, onRefresh })
             />
           ))}
         </div>
+      )}
+
+      {bookings.length > 0 && (
+        <Pagination 
+          count={count} 
+          pageSize={50} 
+          currentPage={currentPage} 
+          onPageChange={(p) => fetchBookings(p, { status: statusFilter, trip_type: tripFilter, search })} 
+        />
       )}
 
       {/* Detail Modal */}
@@ -194,19 +194,17 @@ function BookingsTab({ bookings, vehicles, loading, onStatusChange, onRefresh })
 
 // ── Users Tab ──────────────────────────────────────────
 
-function UsersTab({ users, loading, onUsersChange, onRefresh }) {
+function UsersTab({ users, count, currentPage, loading, onUsersChange, onRefresh, fetchUsers }) {
   const [search, setSearch] = useState('')
   const [actionLoading, setActionLoading] = useState(null)
-  const [confirmDelete, setConfirmDelete] = useState(null) // user id pending delete confirm
+  const [confirmDelete, setConfirmDelete] = useState(null)
 
-  const filtered = users.filter(
-    (u) =>
-      !search ||
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase()) ||
-      u.phone.includes(search) ||
-      u.place.toLowerCase().includes(search.toLowerCase())
-  )
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      fetchUsers(1, { search })
+    }, 300)
+    return () => clearTimeout(handler)
+  }, [search, fetchUsers])
 
   const toggleAdmin = async (user) => {
     setActionLoading(user.id)
@@ -276,13 +274,12 @@ function UsersTab({ users, loading, onUsersChange, onRefresh }) {
       </div>
 
       <p style={{ color: 'var(--text-muted)', fontSize: '0.83rem', marginBottom: '1rem' }}>
-        Showing <strong style={{ color: 'var(--text)' }}>{filtered.length}</strong> of{' '}
-        {users.length} users
+        Found <strong style={{ color: 'var(--text)' }}>{count}</strong> matching users
       </p>
 
       {loading ? (
         <LoadingSpinner text="Loading users…" />
-        ) : filtered.length === 0 ? (
+        ) : users.length === 0 ? (
           <div className="empty-state card">
             <div className="empty-icon"><Users size={32} color="var(--text-muted)" /></div>
             <div className="empty-title">No users found</div>
@@ -305,7 +302,7 @@ function UsersTab({ users, loading, onUsersChange, onRefresh }) {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((u) => (
+              {users.map((u) => (
                 <tr key={u.id}>
                   <td style={{ color: 'var(--text-muted)', fontWeight: 600 }}>{u.id}</td>
                   <td>
@@ -404,6 +401,15 @@ function UsersTab({ users, loading, onUsersChange, onRefresh }) {
               ))}
             </tbody>
           </table>
+          
+          {users.length > 0 && (
+            <Pagination 
+              count={count} 
+              pageSize={50} 
+              currentPage={currentPage} 
+              onPageChange={(p) => fetchUsers(p, { search })} 
+            />
+          )}
         </div>
       )}
     </div>
@@ -417,15 +423,35 @@ export default function AdminDashboardPage() {
   const [bookings, setBookings] = useState([])
   const [users, setUsers] = useState([])
   const [vehicles, setVehicles] = useState([])
+  
+  const [bookingsCount, setBookingsCount] = useState(0)
+  const [usersCount, setUsersCount] = useState(0)
+  
+  const [bookingsPage, setBookingsPage] = useState(1)
+  const [usersPage, setUsersPage] = useState(1)
+  
   const [bookingsLoading, setBookingsLoading] = useState(true)
   const [usersLoading, setUsersLoading] = useState(true)
-  const [fetchError, setFetchError] = useState('')
+  
+  const [stats, setStats] = useState(null)
+  const [fetchError, setFetchError] = useState(null)
 
-  const fetchBookings = useCallback(async () => {
+  const fetchStats = useCallback(async () => {
+    try {
+      const res = await adminAPI.getStats()
+      setStats(res.data)
+    } catch {
+      console.error('Failed to load stats')
+    }
+  }, [])
+
+  const fetchBookings = useCallback(async (page = 1, filters = {}) => {
     setBookingsLoading(true)
     try {
-      const res = await adminAPI.listAllBookings()
-      setBookings(res.data)
+      const res = await adminAPI.listAllBookings({ page, ...filters })
+      setBookings(res.data.results || [])
+      setBookingsCount(res.data.count || 0)
+      setBookingsPage(page)
     } catch {
       setFetchError('Failed to load bookings.')
     } finally {
@@ -433,11 +459,13 @@ export default function AdminDashboardPage() {
     }
   }, [])
 
-  const fetchUsers = useCallback(async () => {
+  const fetchUsers = useCallback(async (page = 1, filters = {}) => {
     setUsersLoading(true)
     try {
-      const res = await adminAPI.listUsers()
-      setUsers(res.data)
+      const res = await adminAPI.listUsers({ page, ...filters })
+      setUsers(res.data.results || [])
+      setUsersCount(res.data.count || 0)
+      setUsersPage(page)
     } catch {
       setFetchError('Failed to load users.')
     } finally {
@@ -455,10 +483,11 @@ export default function AdminDashboardPage() {
   }, [])
 
   useEffect(() => {
-    fetchBookings()
-    fetchUsers()
+    fetchStats()
+    fetchBookings(1)
+    fetchUsers(1)
     fetchVehicles()
-  }, [fetchBookings, fetchUsers, fetchVehicles])
+  }, [fetchStats, fetchBookings, fetchUsers, fetchVehicles])
 
   // Optimistic status update — avoids full refetch
   const handleStatusChange = useCallback((bookingId, newStatus, note = null) => {
@@ -494,10 +523,7 @@ export default function AdminDashboardPage() {
         )}
 
         {/* Stats Bar */}
-        <StatsBar
-          bookings={bookings}
-          users={users}
-        />
+        <StatsBar stats={stats} />
 
         {/* Tabs */}
         <div className="tabs">
@@ -522,16 +548,25 @@ export default function AdminDashboardPage() {
           <BookingsTab
             bookings={bookings}
             vehicles={vehicles}
+            count={bookingsCount}
+            currentPage={bookingsPage}
             loading={bookingsLoading}
-            onStatusChange={handleStatusChange}
-            onRefresh={fetchBookings}
+            onStatusChange={(id, status, note) => {
+              handleStatusChange(id, status, note)
+              fetchStats() // refresh stats when status changes
+            }}
+            onRefresh={() => { fetchBookings(bookingsPage); fetchStats(); }}
+            fetchBookings={fetchBookings}
           />
         ) : (
           <UsersTab
             users={users}
+            count={usersCount}
+            currentPage={usersPage}
             loading={usersLoading}
             onUsersChange={setUsers}
-            onRefresh={fetchUsers}
+            onRefresh={() => { fetchUsers(usersPage); fetchStats(); }}
+            fetchUsers={fetchUsers}
           />
         )}
       </div>

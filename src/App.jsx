@@ -15,6 +15,8 @@ import DashboardPage from './pages/DashboardPage'
 import BookingFormPage from './pages/BookingFormPage'
 import BookingHistoryPage from './pages/BookingHistoryPage'
 import AdminDashboardPage from './pages/AdminDashboardPage'
+import SettingsPage from './pages/SettingsPage'
+import NotFoundPage from './pages/NotFoundPage'
 import UserLayout from './components/UserLayout'
 
 export default function App() {
@@ -59,6 +61,14 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <UserLayout><SettingsPage /></UserLayout>
+              </ProtectedRoute>
+            }
+          />
 
           {/* Admin-only route */}
           <Route
@@ -70,11 +80,10 @@ export default function App() {
             }
           />
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {/* Catch-all route */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
   )
 }
-

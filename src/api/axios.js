@@ -118,6 +118,7 @@ export const authAPI = {
   getProfile: () => api.get('/auth/profile/'),
   updateProfile: (data) => api.patch('/auth/profile/', data),
   changePassword: (data) => api.post('/auth/change-password/', data),
+  changeEmail: (data) => api.post('/auth/change-email/', data),
   forgotPassword: (data) => api.post('/auth/forgot-password/', data),
   resetPassword: (data) => api.post('/auth/reset-password/', data),
   verifyEmail: (data) => api.post('/auth/verify-email/', data),
@@ -127,14 +128,18 @@ export const authAPI = {
 
 // ── Bookings API ──
 export const bookingsAPI = {
+  getStats: () => api.get('/bookings/stats/'),
+  list: (params) => api.get('/bookings/', { params }),
+  get: (id) => api.get(`/bookings/${id}/`),
   create: (data) => api.post('/bookings/', data),
-  list: () => api.get('/bookings/'),
-  detail: (id) => api.get(`/bookings/${id}/`),
   cancel: (id) => api.post(`/bookings/${id}/cancel/`),
 }
 
 // ── Admin API ──
 export const adminAPI = {
+  // Stats
+  getStats: () => api.get('/bookings/admin/stats/'),
+
   // Bookings
   listAllBookings: (params) => api.get('/bookings/admin/all/', { params }),
   updateBookingStatus: (id, data) => api.patch(`/bookings/admin/${id}/status/`, data),

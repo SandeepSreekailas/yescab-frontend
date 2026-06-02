@@ -6,35 +6,84 @@ import { AlertTriangle, LogIn } from 'lucide-react'
 // Google Client ID — loaded from environment variable
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
 
+// Global states to ensure absolute single-initialization across app lifecycle/re-renders
+if (typeof window.__gsiInitialized === 'undefined') {
+  window.__gsiInitialized = false
+}
+if (typeof window.__gsiCallback === 'undefined') {
+  window.__gsiCallback = null
+}
+
 /**
  * Shared hook: loads GIS script + renders Google's own button into a hidden container.
  * The real Google button is made invisible and overlaid on top of a custom-styled button.
  */
 export function useGoogleSignIn(containerRef, onCredential, onError) {
   const [ready, setReady] = useState(false)
-  const callbackRef = useRef(onCredential)
-  callbackRef.current = onCredential
+
+  // Use refs for all callbacks to prevent dependency array thrashing and unnecessary re-initializations
+  const credentialRef = useRef(onCredential)
+  credentialRef.current = onCredential
+
+  const errorRef = useRef(onError)
+  errorRef.current = onError
 
   const renderBtn = useCallback(() => {
     if (!window.google?.accounts?.id || !containerRef.current) return
-    window.google.accounts.id.initialize({
-      client_id: GOOGLE_CLIENT_ID,
-      callback: (response) => callbackRef.current?.(response),
-      auto_select: false,
-      cancel_on_tap_outside: true,
-    })
 
-    window.google.accounts.id.renderButton(containerRef.current, {
-      type: 'standard',
-      theme: 'outline',
-      size: 'large',
-      text: 'continue_with',
-      shape: 'rectangular',
-      logo_alignment: 'left',
-      width: 400,
-    })
+    // Guard 1: Prevent duplicate GSI rendering on the same DOM element (e.g. during StrictMode double-mount or re-renders)
+    if (containerRef.current.dataset.gsiRendered === 'true' || containerRef.current.hasChildNodes()) {
+      setReady(true)
+      return
+    }
+
+    // Guard 2: Ensure Google Identity Services is initialized EXACTLY ONCE globally
+    if (!window.__gsiInitialized) {
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: (response) => {
+          if (typeof window.__gsiCallback === 'function') {
+            window.__gsiCallback(response)
+          }
+        },
+        auto_select: false,
+        cancel_on_tap_outside: true,
+      })
+      window.__gsiInitialized = true
+    }
+
+    // Register active credential handler safely
+    window.__gsiCallback = (response) => credentialRef.current?.(response)
+
+    try {
+      window.google.accounts.id.renderButton(containerRef.current, {
+        type: 'standard',
+        theme: 'outline',
+        size: 'large',
+        text: 'continue_with',
+        shape: 'rectangular',
+        logo_alignment: 'left',
+        width: 400,
+      })
+      containerRef.current.dataset.gsiRendered = 'true'
+    } catch (err) {
+      console.error('Error rendering Google Sign-In button:', err)
+    }
+
     setReady(true)
   }, [containerRef])
+
+  // Dynamic registration of callback for the currently mounted page
+  useEffect(() => {
+    const activeCallback = (response) => credentialRef.current?.(response)
+    window.__gsiCallback = activeCallback
+    return () => {
+      // Only clear if we are still the registered callback to prevent race conditions during page transitions
+      if (window.__gsiCallback === activeCallback) {
+        window.__gsiCallback = null
+      }
+    }
+  }, [])
 
   useEffect(() => {
     if (!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID.includes('YOUR_GOOGLE_CLIENT_ID')) return
@@ -52,7 +101,7 @@ export function useGoogleSignIn(containerRef, onCredential, onError) {
       script.async = true
       script.defer = true
       script.onload = () => renderBtn()
-      script.onerror = () => onError?.('Failed to load Google Sign-In.')
+      script.onerror = () => errorRef.current?.('Failed to load Google Sign-In.')
       document.head.appendChild(script)
     } else {
       const timer = setInterval(() => {
@@ -63,7 +112,7 @@ export function useGoogleSignIn(containerRef, onCredential, onError) {
       }, 200)
       return () => clearInterval(timer)
     }
-  }, [renderBtn, onError])
+  }, [renderBtn])
 
   return ready
 }

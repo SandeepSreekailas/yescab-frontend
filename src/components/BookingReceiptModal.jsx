@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect, useRef, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { X, Printer, Download, Clock, MapPin, User, Calendar, Tag } from 'lucide-react'
 import StatusBadge from './StatusBadge'
 
@@ -6,6 +7,34 @@ export default function BookingReceiptModal({ booking, onClose }) {
   if (!booking) return null
 
   const b = booking
+  const modalRef = useRef(null)
+  const receiptRef = useRef(null)
+  const prevOverflowRef = useRef('')
+
+  // Lock body scrolling while modal is open; restore on close/unmount
+  useEffect(() => {
+    prevOverflowRef.current = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = prevOverflowRef.current || ''
+    }
+  }, [])
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        onClose()
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [onClose])
+
+  // Auto-focus modal on open for accessibility
+  useEffect(() => {
+    modalRef.current?.focus()
+  }, [])
 
   const formatDate = (dateStr) =>
     new Date(dateStr).toLocaleDateString('en-IN', {
@@ -22,26 +51,59 @@ export default function BookingReceiptModal({ booking, onClose }) {
     return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true })
   }
 
+  // Print: uses browser's native print dialog (user can "Save as PDF" from there)
   const handlePrint = () => {
     window.print()
   }
 
-  return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div 
-        className="modal-content receipt-modal animate-scale" 
+  // Download PDF: programmatically triggers print in "save as PDF" mode
+  // Since browsers control the print dialog, this also uses window.print()
+  // The @media print CSS ensures only the receipt renders cleanly
+  const handleDownloadPDF = () => {
+    window.print()
+  }
+
+  // Prevent scroll chaining from receipt body to background
+  const handleContentScroll = useCallback((e) => {
+    const el = e.currentTarget
+    const atTop = el.scrollTop === 0
+    const atBottom = el.scrollHeight - el.scrollTop <= el.clientHeight + 1
+
+    if ((atTop && e.deltaY < 0) || (atBottom && e.deltaY > 0)) {
+      e.preventDefault()
+    }
+  }, [])
+
+  // Use a React Portal to render the modal directly as a child of <body>.
+  // This is critical for print CSS: the rule `body > *:not(.receipt-print-root)`
+  // hides #root and all page content, while this portal element remains visible.
+  return createPortal(
+    <div
+      className="modal-overlay receipt-print-root"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Booking Receipt"
+    >
+      <div
+        ref={modalRef}
+        className="modal-content receipt-modal animate-scale"
         onClick={e => e.stopPropagation()}
+        tabIndex={-1}
         style={{ maxWidth: '500px' }}
       >
-        {/* Receipt Header */}
+        {/* Receipt Header — sticky at top */}
         <div className="receipt-header">
           <div className="receipt-brand">
             <span className="brand-yes">Yes</span><span className="brand-cab">Cab</span>
           </div>
-          <button className="modal-close-btn" onClick={onClose}><X size={20} /></button>
+          <button className="modal-close-btn" onClick={onClose} aria-label="Close receipt">
+            <X size={20} />
+          </button>
         </div>
 
-        <div className="receipt-body">
+        {/* Scrollable receipt content */}
+        <div className="receipt-body" ref={receiptRef} onWheel={handleContentScroll}>
           <div className="receipt-title-wrap">
             <h2 className="receipt-title">Booking Receipt</h2>
             <div className="receipt-status">
@@ -110,15 +172,17 @@ export default function BookingReceiptModal({ booking, onClose }) {
           )}
         </div>
 
+        {/* Sticky action buttons — always visible on screen, hidden in print */}
         <div className="receipt-actions no-print">
           <button className="btn btn-secondary btn-sm" onClick={handlePrint}>
             <Printer size={16} /> Print
           </button>
-          <button className="btn btn-primary btn-sm" onClick={onClose}>
-            Done
+          <button className="btn btn-primary btn-sm" onClick={handleDownloadPDF}>
+            <Download size={16} /> Download PDF
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

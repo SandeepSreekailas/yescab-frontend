@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /book
+Disallow: /my-bookings
+Disallow: /settings
+Disallow: /admin
+
+Sitemap: https://yezcabs.com/sitemap.xml

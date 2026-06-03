@@ -104,25 +104,31 @@ const STEPS = [
   },
 ]
 
-const TESTIMONIALS = [
+const TRIP_SERVICES = [
   {
-    text: 'YezCabs made my airport pickup so seamless. Booked the night before, got confirmed within an hour, and the driver was right on time at Kochi airport.',
-    name: 'Arjun Menon',
-    role: 'Business Traveler',
-    initials: 'AM',
+    title: 'Airport Pickup',
+    desc: 'Reliable pickup services from Cochin International Airport (COK) directly to your destination in Ernakulam.',
+    features: ['Meet & greet at arrival terminal', 'Flight tracking for delays', 'Fixed rates without surprises'],
+    icon: <Plane size={24} />
   },
   {
-    text: 'I use YezCabs weekly for my office commute from Aluva. The booking process is incredibly simple and the WhatsApp notifications keep me updated at every step.',
-    name: 'Sneha Thomas',
-    role: 'IT Professional',
-    initials: 'ST',
+    title: 'Airport Drop',
+    desc: 'Punctual departure transfers from your home, hotel, or office to Cochin International Airport.',
+    features: ['Timely scheduling warnings', 'Help with luggage', 'Experienced airport route drivers'],
+    icon: <Plane size={24} style={{ transform: 'rotate(180deg)' }} />
   },
   {
-    text: 'Planned a family tour package to Munnar through YezCabs. The admin response was fast, driver was professional, and the whole experience felt premium.',
-    name: 'Rajan Nair',
-    role: 'Tour Customer',
-    initials: 'RN',
+    title: 'Tour Packages',
+    desc: 'Sightseeing and custom leisure travel tours to Munnar, Alleppey, Fort Kochi, and beyond.',
+    features: ['Full-day & multi-day trips', 'Flexible tour itineraries', 'Comfortable family vehicles'],
+    icon: <Map size={24} />
   },
+  {
+    title: 'Taxi Booking',
+    desc: 'Point-to-point local taxi transfers within Ernakulam district for your daily travel needs.',
+    features: ['Affordable local routing', 'Quick dispatch verification', 'Clean & air-conditioned cabs'],
+    icon: <CarFront size={24} />
+  }
 ]
 
 // ── Component ──
@@ -160,7 +166,7 @@ export default function LandingPage() {
           <li><a href="#features" onClick={(e) => { e.preventDefault(); scrollTo('features') }}>Features</a></li>
           <li><a href="#how-it-works" onClick={(e) => { e.preventDefault(); scrollTo('how-it-works') }}>How It Works</a></li>
           <li><a href="#about" onClick={(e) => { e.preventDefault(); scrollTo('about') }}>About</a></li>
-          <li><a href="#testimonials" onClick={(e) => { e.preventDefault(); scrollTo('testimonials') }}>Reviews</a></li>
+          <li><a href="#services" onClick={(e) => { e.preventDefault(); scrollTo('services') }}>Services</a></li>
         </ul>
 
         <div className="lp-nav-actions">
@@ -188,7 +194,7 @@ export default function LandingPage() {
           <a href="#features" onClick={(e) => { e.preventDefault(); scrollTo('features') }}>Features</a>
           <a href="#how-it-works" onClick={(e) => { e.preventDefault(); scrollTo('how-it-works') }}>How It Works</a>
           <a href="#about" onClick={(e) => { e.preventDefault(); scrollTo('about') }}>About</a>
-          <a href="#testimonials" onClick={(e) => { e.preventDefault(); scrollTo('testimonials') }}>Reviews</a>
+          <a href="#services" onClick={(e) => { e.preventDefault(); scrollTo('services') }}>Services</a>
           <hr style={{ width: '60px', border: 'none', borderTop: '1px solid var(--border)', margin: '0.5rem 0' }} />
           {user ? (
             <Link to="/dashboard" className="lp-btn lp-btn-primary" onClick={() => setMobileMenuOpen(false)}>Dashboard</Link>
@@ -229,16 +235,16 @@ export default function LandingPage() {
           </div>
           <div className="lp-hero-stats">
             <div className="lp-stat">
-              <span className="lp-stat-number">500+</span>
-              <span className="lp-stat-label">Rides Completed</span>
+              <span className="lp-stat-number">Kochi</span>
+              <span className="lp-stat-label">Local Services</span>
             </div>
             <div className="lp-stat">
-              <span className="lp-stat-number">4.8</span>
-              <span className="lp-stat-label">Avg. Rating</span>
+              <span className="lp-stat-number">Online</span>
+              <span className="lp-stat-label">Booking System</span>
             </div>
             <div className="lp-stat">
-              <span className="lp-stat-number">24/7</span>
-              <span className="lp-stat-label">Support</span>
+              <span className="lp-stat-number">Live</span>
+              <span className="lp-stat-label">Status Tracking</span>
             </div>
           </div>
         </div>
@@ -344,33 +350,36 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ══════════ TESTIMONIALS ══════════ */}
-      <section className="lp-section" id="testimonials">
+      {/* ══════════ SERVICES ══════════ */}
+      <section className="lp-section" id="services">
         <AnimateOnScroll>
           <div className="lp-section-header">
-            <span className="lp-section-label">Testimonials</span>
-            <h2 className="lp-section-title">What Our Customers Say</h2>
+            <span className="lp-section-label">Service Packages</span>
+            <h2 className="lp-section-title">Our Transportation Services</h2>
             <p className="lp-section-desc">
-              Real feedback from travelers who trust YezCabs for their daily commute and special trips.
+              Factual, reliable, and verified trip configurations offered directly on our platform.
             </p>
           </div>
         </AnimateOnScroll>
 
         <div className="lp-testimonials-grid">
-          {TESTIMONIALS.map((t, i) => (
+          {TRIP_SERVICES.map((s, i) => (
             <AnimateOnScroll key={i} delay={i + 1}>
-              <div className="lp-testimonial-card">
-                <div className="lp-testimonial-stars">
-                  {[...Array(5)].map((_, j) => <Star key={j} size={16} fill="currentColor" />)}
-                </div>
-                <p className="lp-testimonial-text">"{t.text}"</p>
-                <div className="lp-testimonial-author">
-                  <div className="lp-testimonial-avatar">{t.initials}</div>
-                  <div>
-                    <div className="lp-testimonial-name">{t.name}</div>
-                    <div className="lp-testimonial-role">{t.role}</div>
+              <div className="lp-testimonial-card" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.25rem' }}>
+                  <div className="lp-testimonial-avatar" style={{ background: 'var(--primary-light)', color: 'var(--primary)', borderRadius: 'var(--radius)' }}>
+                    {s.icon}
                   </div>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--text)', margin: 0 }}>{s.title}</h3>
                 </div>
+                <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: 1.6, marginBottom: '1.5rem', flexGrow: 1 }}>
+                  {s.desc}
+                </p>
+                <ul style={{ paddingLeft: '1.2rem', color: 'var(--text-faint)', fontSize: '0.82rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', listStyleType: 'disc' }}>
+                  {s.features.map((f, j) => (
+                    <li key={j}>{f}</li>
+                  ))}
+                </ul>
               </div>
             </AnimateOnScroll>
           ))}
@@ -384,7 +393,7 @@ export default function LandingPage() {
           <div className="lp-cta-content">
             <h2>Ready to Book Your Next Ride?</h2>
             <p>
-              Join hundreds of satisfied travelers in Kochi. Create your free account
+              Experience a reliable, online cab booking platform in Kochi. Create your free account
               and book your first cab in under two minutes.
             </p>
             <div className="lp-cta-buttons">

@@ -122,11 +122,11 @@ export default function RegisterPage() {
       <div className="auth-card" style={{ maxWidth: '520px' }}>
         <div className="auth-logo">
           <div className="auth-logo-icon">Y</div>
-          <span className="auth-logo-text">Yes<span>Cab</span></span>
+          <span className="auth-logo-text">Yez<span>Cabs</span></span>
         </div>
 
         <h1 className="auth-title">Create your account</h1>
-        <p className="auth-subtitle">Join YesCab and start booking rides in seconds.</p>
+        <p className="auth-subtitle">Join YezCabs and start booking rides in seconds.</p>
 
         {apiError && (<div className="alert alert-error mb-2" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><AlertTriangle size={18} /> {apiError}</div>)}
 

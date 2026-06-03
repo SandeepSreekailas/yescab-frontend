@@ -190,7 +190,7 @@ export default function DashboardPage() {
                   <CarFront size={48} color="var(--text-faint)" />
                 </div>
                 <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-                  No recent bookings. Start your journey with YesCab today!
+                  No recent bookings. Start your journey with YezCabs today!
                 </p>
                 <button
                   className="btn btn-primary"

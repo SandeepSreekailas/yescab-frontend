@@ -44,7 +44,7 @@ export default function Navbar() {
         <NavLink to="/dashboard" className="navbar-brand" onClick={closeMenu}>
           <div className="navbar-logo">Y</div>
           <span className="navbar-name">
-            Yes<span>Cab</span>
+            Yez<span>Cabs</span>
           </span>
         </NavLink>
 
@@ -114,7 +114,7 @@ export default function Navbar() {
       <div className={`navbar-mobile ${menuOpen ? 'open' : ''}`}>
         <div className="navbar-mobile-header">
           <div className="navbar-logo" style={{ fontSize: '1.2rem', width: '32px', height: '32px' }}>Y</div>
-          <span className="navbar-name" style={{ fontSize: '1.2rem' }}>Yes<span>Cab</span></span>
+          <span className="navbar-name" style={{ fontSize: '1.2rem' }}>Yez<span>Cabs</span></span>
           <button className="navbar-hamburger" onClick={closeMenu} style={{ marginLeft: 'auto' }}>
             <X size={24} />
           </button>

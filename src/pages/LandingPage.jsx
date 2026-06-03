@@ -106,19 +106,19 @@ const STEPS = [
 
 const TESTIMONIALS = [
   {
-    text: 'YesCab made my airport pickup so seamless. Booked the night before, got confirmed within an hour, and the driver was right on time at Kochi airport.',
+    text: 'YezCabs made my airport pickup so seamless. Booked the night before, got confirmed within an hour, and the driver was right on time at Kochi airport.',
     name: 'Arjun Menon',
     role: 'Business Traveler',
     initials: 'AM',
   },
   {
-    text: 'I use YesCab weekly for my office commute from Aluva. The booking process is incredibly simple and the WhatsApp notifications keep me updated at every step.',
+    text: 'I use YezCabs weekly for my office commute from Aluva. The booking process is incredibly simple and the WhatsApp notifications keep me updated at every step.',
     name: 'Sneha Thomas',
     role: 'IT Professional',
     initials: 'ST',
   },
   {
-    text: 'Planned a family tour package to Munnar through YesCab. The admin response was fast, driver was professional, and the whole experience felt premium.',
+    text: 'Planned a family tour package to Munnar through YezCabs. The admin response was fast, driver was professional, and the whole experience felt premium.',
     name: 'Rajan Nair',
     role: 'Tour Customer',
     initials: 'RN',
@@ -153,7 +153,7 @@ export default function LandingPage() {
       {/* ── Navbar ── */}
       <nav className={`lp-nav ${scrolled ? 'scrolled' : ''}`}>
         <Link to="/" className="lp-nav-brand">
-          <span className="brand-yes">Yes</span><span className="brand-cab">Cab</span>
+          <span className="brand-yes">Yez</span><span className="brand-cab">Cabs</span>
         </Link>
 
         <ul className="lp-nav-links">
@@ -302,7 +302,7 @@ export default function LandingPage() {
           <AnimateOnScroll>
             <div className="lp-about-visual">
               <div className="lp-about-logo">
-                <span className="brand-yes">Yes</span><span className="brand-cab">Cab</span>
+                <span className="brand-yes">Yez</span><span className="brand-cab">Cabs</span>
               </div>
               <p className="lp-about-tagline">
                 Premium cab service trusted by hundreds of travelers across Ernakulam district.
@@ -325,7 +325,7 @@ export default function LandingPage() {
             <div className="lp-about-text">
               <h3>Built for Kochi. Built for You.</h3>
               <p>
-                YesCab is a modern cab booking platform designed specifically for travelers
+                YezCabs is a modern cab booking platform designed specifically for travelers
                 in and around Ernakulam, Kochi. Whether you need an airport pickup at dawn,
                 a reliable local taxi, or a curated tour package to Munnar, we have you covered.
               </p>
@@ -351,7 +351,7 @@ export default function LandingPage() {
             <span className="lp-section-label">Testimonials</span>
             <h2 className="lp-section-title">What Our Customers Say</h2>
             <p className="lp-section-desc">
-              Real feedback from travelers who trust YesCab for their daily commute and special trips.
+              Real feedback from travelers who trust YezCabs for their daily commute and special trips.
             </p>
           </div>
         </AnimateOnScroll>

@@ -348,7 +348,7 @@ export default function BookingDetailModal({ booking, vehicles = [], onClose, is
                           ))}
                         </select>
                         <a
-                          href={`https://wa.me/${b.phone_number.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi ${b.name}, your YesCab booking #${b.id} status is now ${STATUS_CONFIG[localStatus]?.label || localStatus}.${localNote ? ` Note: ${localNote}` : ''}`)}`}
+                          href={`https://wa.me/${b.phone_number.replace(/\D/g, '')}?text=${encodeURIComponent(`Hi ${b.name}, your YezCabs booking #${b.id} status is now ${STATUS_CONFIG[localStatus]?.label || localStatus}.${localNote ? ` Note: ${localNote}` : ''}`)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="btn btn-primary"

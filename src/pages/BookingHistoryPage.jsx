@@ -29,7 +29,7 @@ const STATUS_EXPLANATIONS = {
   pending:         { icon: Clock,       text: 'Your booking is awaiting admin approval. You will be notified once reviewed.', color: '#fbbf24' },
   approved:        { icon: CheckCircle, text: 'Your ride has been approved. A driver will be assigned shortly.', color: '#4ade80' },
   driver_assigned: { icon: CarFront,    text: 'A driver has been assigned to your ride. Get ready!', color: '#60a5fa' },
-  completed:       { icon: Check,       text: 'Your trip has been completed. Thank you for choosing YesCab!', color: '#4ade80' },
+  completed:       { icon: Check,       text: 'Your trip has been completed. Thank you for choosing YezCabs!', color: '#4ade80' },
   rejected:        { icon: XCircle,     text: 'This booking was rejected by admin. Please contact support or create a new booking.', color: '#f87171' },
   cancelled:       { icon: Ban,         text: 'This booking was cancelled. You can create a new booking anytime.', color: '#9ca3af' },
 }

@@ -335,7 +335,7 @@ export default function BookingFormPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', alignItems: 'center' }}>
                 {import.meta.env.VITE_ADMIN_WHATSAPP_NUMBER ? (
                   <a 
-                    href={`https://wa.me/${import.meta.env.VITE_ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi YesCab, I have successfully submitted a booking request for ${form._lastBooking?.date} from ${form._lastBooking?.from_location} to ${form._lastBooking?.to_location}.`)}`}
+                    href={`https://wa.me/${import.meta.env.VITE_ADMIN_WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi YezCabs, I have successfully submitted a booking request for ${form._lastBooking?.date} from ${form._lastBooking?.from_location} to ${form._lastBooking?.to_location}.`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="btn btn-primary"

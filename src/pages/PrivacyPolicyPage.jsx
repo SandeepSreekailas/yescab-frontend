@@ -16,7 +16,7 @@ export default function PrivacyPolicyPage() {
         <div className="auth-logo" style={{ marginBottom: '1.5rem' }}>
           <div className="auth-logo-icon">Y</div>
           <span className="auth-logo-text">
-            Yes<span>Cab</span>
+            Yez<span>Cabs</span>
           </span>
         </div>
 
@@ -27,7 +27,7 @@ export default function PrivacyPolicyPage() {
 
         <div style={{ color: 'var(--text)', lineHeight: 1.7, fontSize: '0.92rem' }}>
           <p>
-            YesCab (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) is committed to protecting your personal
+            YezCabs (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;) is committed to protecting your personal
             information. This Privacy Policy explains what data we collect, how we use it, and your rights
             regarding that data.
           </p>
@@ -35,7 +35,7 @@ export default function PrivacyPolicyPage() {
           <h2 style={{ color: 'var(--primary)', marginTop: '2rem', fontSize: '1.15rem' }}>
             1. Information We Collect
           </h2>
-          <p>When you register and use YesCab, we collect the following information:</p>
+          <p>When you register and use YezCabs, we collect the following information:</p>
           <ul style={{ paddingLeft: '1.2rem', marginTop: '0.5rem' }}>
             <li><strong>Name</strong> — to personalise your experience and bookings.</li>
             <li><strong>Email address</strong> — for account authentication, booking confirmations, and important service communications.</li>
@@ -116,7 +116,7 @@ export default function PrivacyPolicyPage() {
             8. Cookies
           </h2>
           <p>
-            YesCab does not use cookies for tracking or analytics. Authentication tokens are stored
+            YezCabs does not use cookies for tracking or analytics. Authentication tokens are stored
             in your browser&apos;s local storage and are used solely for session management.
           </p>
 
@@ -125,7 +125,7 @@ export default function PrivacyPolicyPage() {
           </h2>
           <p>
             If you have questions about this Privacy Policy or wish to exercise your data rights,
-            please contact us at: <strong style={{ color: 'var(--primary)' }}>support@yescab.com</strong>
+            please contact us at: <strong style={{ color: 'var(--primary)' }}>yezcabs@gmail.com</strong>
           </p>
         </div>
 

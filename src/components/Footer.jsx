@@ -11,7 +11,7 @@ export default function Footer() {
         {/* Brand & Mission */}
         <div className="footer-section">
           <Link to="/" className="footer-brand">
-            <span className="brand-yes">Yes</span><span className="brand-cab">Cab</span>
+            <span className="brand-yes">Yez</span><span className="brand-cab">Cabs</span>
           </Link>
           <p className="footer-desc">
             Your premium transportation partner in Ernakulam. Professional drivers, 
@@ -60,7 +60,7 @@ export default function Footer() {
             </li>
             <li>
               <Mail size={18} />
-              <span>support@yescab.com</span>
+              <span>yezcabs@gmail.com</span>
             </li>
           </ul>
         </div>
@@ -68,7 +68,7 @@ export default function Footer() {
 
       <div className="footer-bottom">
         <div className="container">
-          <p>&copy; {currentYear} YesCab Transportation Services. All rights reserved.</p>
+          <p>&copy; {currentYear} YezCabs Transportation Services. All rights reserved.</p>
         </div>
       </div>
     </footer>

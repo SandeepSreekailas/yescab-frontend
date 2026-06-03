@@ -238,7 +238,7 @@ export default function LoginPage() {
         <div className="auth-logo">
           <div className="auth-logo-icon">Y</div>
           <span className="auth-logo-text">
-            Yes<span>Cab</span>
+            Yez<span>Cabs</span>
           </span>
         </div>
 

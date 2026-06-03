@@ -95,7 +95,7 @@ export default function BookingReceiptModal({ booking, onClose }) {
         {/* Receipt Header — sticky at top */}
         <div className="receipt-header">
           <div className="receipt-brand">
-            <span className="brand-yes">Yes</span><span className="brand-cab">Cab</span>
+            <span className="brand-yes">Yez</span><span className="brand-cab">Cabs</span>
           </div>
           <button className="modal-close-btn" onClick={onClose} aria-label="Close receipt">
             <X size={20} />

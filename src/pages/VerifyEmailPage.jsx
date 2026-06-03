@@ -68,7 +68,7 @@ export default function VerifyEmailPage() {
               <CheckCircle size={20} /> Your email has been verified successfully!
             </div>
             <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>
-              You now have full access to YesCab.
+              You now have full access to YezCabs.
             </p>
             <Link
               to="/dashboard"

@@ -16,7 +16,7 @@ export default function TermsOfServicePage() {
         <div className="auth-logo" style={{ marginBottom: '1.5rem' }}>
           <div className="auth-logo-icon">Y</div>
           <span className="auth-logo-text">
-            Yes<span>Cab</span>
+            Yez<span>Cabs</span>
           </span>
         </div>
 
@@ -27,7 +27,7 @@ export default function TermsOfServicePage() {
 
         <div style={{ color: 'var(--text)', lineHeight: 1.7, fontSize: '0.92rem' }}>
           <p>
-            By using YesCab (&quot;the Service&quot;), you agree to the following terms and conditions.
+            By using YezCabs (&quot;the Service&quot;), you agree to the following terms and conditions.
             Please read them carefully before creating an account or making a booking.
           </p>
 
@@ -35,7 +35,7 @@ export default function TermsOfServicePage() {
             1. Service Description
           </h2>
           <p>
-            YesCab is a cab booking platform that connects passengers with transportation services
+            YezCabs is a cab booking platform that connects passengers with transportation services
             in the Ernakulam district, Kerala. We offer airport pickups, airport drops, tour packages,
             and local taxi bookings. All bookings are subject to admin approval.
           </p>
@@ -68,7 +68,7 @@ export default function TermsOfServicePage() {
           </h2>
           <p>
             Once a booking is submitted, it is reviewed by our admin team. Cancellation or modification
-            policies are at the discretion of YesCab. If you need to cancel or modify a booking, please
+            policies are at the discretion of YezCabs. If you need to cancel or modify a booking, please
             contact our support team as soon as possible.
           </p>
 
@@ -86,7 +86,7 @@ export default function TermsOfServicePage() {
             6. Limitation of Liability
           </h2>
           <p>
-            YesCab acts as a booking facilitation platform. To the fullest extent permitted by law:
+            YezCabs acts as a booking facilitation platform. To the fullest extent permitted by law:
           </p>
           <ul style={{ paddingLeft: '1.2rem', marginTop: '0.5rem' }}>
             <li>We are not responsible for delays, cancellations, or service quality issues caused by drivers or external factors.</li>
@@ -131,7 +131,7 @@ export default function TermsOfServicePage() {
           </h2>
           <p>
             For questions about these Terms of Service, please contact us at:{' '}
-            <strong style={{ color: 'var(--primary)' }}>support@yescab.com</strong>
+            <strong style={{ color: 'var(--primary)' }}>yezcabs@gmail.com</strong>
           </p>
         </div>
 

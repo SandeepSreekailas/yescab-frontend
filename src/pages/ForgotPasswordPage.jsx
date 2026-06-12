@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { authAPI } from '../api/axios'
 import { CheckCircle, Mail } from 'lucide-react'
+import BrandLogo from '../components/BrandLogo'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -37,10 +38,7 @@ export default function ForgotPasswordPage() {
     <div className="auth-page">
       <div className="auth-card">
         <div className="auth-logo">
-          <div className="auth-logo-icon">Y</div>
-          <span className="auth-logo-text">
-            Yes<span>Cab</span>
-          </span>
+          <BrandLogo size="lg" />
         </div>
 
         <h1 className="auth-title">Reset your password</h1>

@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Phone, Mail, MapPin, Globe, MessageCircle, Send } from 'lucide-react'
+import BrandLogo from './BrandLogo'
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
@@ -11,7 +12,7 @@ export default function Footer() {
         {/* Brand & Mission */}
         <div className="footer-section">
           <Link to="/" className="footer-brand">
-            <span className="brand-yes">Yez</span><span className="brand-cab">Cabs</span>
+            <BrandLogo size="sm" />
           </Link>
           <p className="footer-desc">
             Your premium transportation partner in Ernakulam. Professional drivers, 
@@ -39,7 +40,20 @@ export default function Footer() {
         <div className="footer-section">
           <h4 className="footer-heading">Company</h4>
           <ul className="footer-links">
-            <li><Link to="/dashboard">About Us</Link></li>
+            <li>
+              <a 
+                href="/#about" 
+                onClick={(e) => {
+                  const el = document.getElementById('about')
+                  if (el) {
+                    e.preventDefault()
+                    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                  }
+                }}
+              >
+                About Us
+              </a>
+            </li>
             <li><Link to="/privacy">Privacy Policy</Link></li>
             <li><Link to="/terms">Terms & Conditions</Link></li>
             <li><Link to="/my-bookings">My Bookings</Link></li>

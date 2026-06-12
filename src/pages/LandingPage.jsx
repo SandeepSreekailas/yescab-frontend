@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Footer from '../components/Footer'
+import BrandLogo from '../components/BrandLogo'
 import {
   CarFront, Plane, Map, Shield, MessageCircle, Mail,
   Clock, CheckCircle, UserPlus, Star, ChevronRight,
@@ -46,8 +47,8 @@ const FEATURES = [
     icon: <Zap size={24} />,
     title: 'Instant Booking',
     desc: 'Book a cab in under a minute. Select your route, pick a time, and you\'re all set.',
-    color: 'rgba(255, 204, 0, 0.12)',
-    iconColor: '#ffcc00',
+    color: 'rgba(217, 255, 0, 0.12)',
+    iconColor: '#D9FF00',
   },
   {
     icon: <Clock size={24} />,
@@ -144,6 +145,17 @@ export default function LandingPage() {
     return () => window.removeEventListener('scroll', handler)
   }, [])
 
+  // Scroll to section on mount if hash is present
+  useEffect(() => {
+    if (window.location.hash) {
+      const id = window.location.hash.replace('#', '')
+      setTimeout(() => {
+        const el = document.getElementById(id)
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }, 150)
+    }
+  }, [])
+
   const scrollTo = useCallback((id) => {
     setMobileMenuOpen(false)
     const el = document.getElementById(id)
@@ -159,7 +171,7 @@ export default function LandingPage() {
       {/* ── Navbar ── */}
       <nav className={`lp-nav ${scrolled ? 'scrolled' : ''}`}>
         <Link to="/" className="lp-nav-brand">
-          <span className="brand-yes">Yez</span><span className="brand-cab">Cabs</span>
+          <BrandLogo size="md" />
         </Link>
 
         <ul className="lp-nav-links">
@@ -191,6 +203,9 @@ export default function LandingPage() {
           <button className="lp-mobile-close" onClick={() => setMobileMenuOpen(false)} aria-label="Close menu">
             <X size={28} />
           </button>
+          <div style={{ marginBottom: '1.5rem', display: 'flex', justifyContent: 'center' }}>
+            <BrandLogo size="lg" />
+          </div>
           <a href="#features" onClick={(e) => { e.preventDefault(); scrollTo('features') }}>Features</a>
           <a href="#how-it-works" onClick={(e) => { e.preventDefault(); scrollTo('how-it-works') }}>How It Works</a>
           <a href="#about" onClick={(e) => { e.preventDefault(); scrollTo('about') }}>About</a>
@@ -308,7 +323,7 @@ export default function LandingPage() {
           <AnimateOnScroll>
             <div className="lp-about-visual">
               <div className="lp-about-logo">
-                <span className="brand-yes">Yez</span><span className="brand-cab">Cabs</span>
+                <BrandLogo size="lg" />
               </div>
               <p className="lp-about-tagline">
                 Premium cab service trusted by hundreds of travelers across Ernakulam district.
@@ -415,3 +430,4 @@ export default function LandingPage() {
     </div>
   )
 }
+

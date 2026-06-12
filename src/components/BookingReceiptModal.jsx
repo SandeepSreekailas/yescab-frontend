@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom'
 import { X, Printer, Download, Clock, MapPin, User, Calendar, Tag } from 'lucide-react'
 import StatusBadge from './StatusBadge'
+import BrandLogo from './BrandLogo'
 
 export default function BookingReceiptModal({ booking, onClose }) {
   if (!booking) return null
@@ -95,7 +96,7 @@ export default function BookingReceiptModal({ booking, onClose }) {
         {/* Receipt Header — sticky at top */}
         <div className="receipt-header">
           <div className="receipt-brand">
-            <span className="brand-yes">Yez</span><span className="brand-cab">Cabs</span>
+            <BrandLogo size="sm" />
           </div>
           <button className="modal-close-btn" onClick={onClose} aria-label="Close receipt">
             <X size={20} />

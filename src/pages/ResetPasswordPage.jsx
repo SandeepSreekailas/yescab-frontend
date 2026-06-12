@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { authAPI } from '../api/axios'
 import { AlertTriangle, CheckCircle, Lock } from 'lucide-react'
+import BrandLogo from '../components/BrandLogo'
 
 export default function ResetPasswordPage() {
   const [searchParams] = useSearchParams()
@@ -19,8 +20,7 @@ export default function ResetPasswordPage() {
       <div className="auth-page">
         <div className="auth-card">
           <div className="auth-logo">
-            <div className="auth-logo-icon">Y</div>
-            <span className="auth-logo-text">Yes<span>Cab</span></span>
+            <BrandLogo size="lg" />
           </div>
           <h1 className="auth-title">Invalid Reset Link</h1>
           <div className="alert alert-error mb-2" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
@@ -92,8 +92,7 @@ export default function ResetPasswordPage() {
     <div className="auth-page">
       <div className="auth-card">
         <div className="auth-logo">
-          <div className="auth-logo-icon">Y</div>
-          <span className="auth-logo-text">Yes<span>Cab</span></span>
+          <BrandLogo size="lg" />
         </div>
 
         <h1 className="auth-title">Set new password</h1>

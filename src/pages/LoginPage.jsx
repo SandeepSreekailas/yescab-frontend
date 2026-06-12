@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { AlertTriangle, LogIn } from 'lucide-react'
+import BrandLogo from '../components/BrandLogo'
 
 // Google Client ID — loaded from environment variable
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
@@ -236,10 +237,7 @@ export default function LoginPage() {
       <div className="auth-card">
         {/* Logo */}
         <div className="auth-logo">
-          <div className="auth-logo-icon">Y</div>
-          <span className="auth-logo-text">
-            Yez<span>Cabs</span>
-          </span>
+          <BrandLogo size="lg" />
         </div>
 
         <h1 className="auth-title">Welcome back</h1>

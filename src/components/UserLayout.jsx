@@ -22,7 +22,7 @@ export default function UserLayout({ children }) {
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       {user && user.is_email_verified === false && (
         <div style={{
-          backgroundColor: 'rgba(255, 204, 0, 0.15)',
+          backgroundColor: 'var(--primary-light)',
           borderBottom: '1px solid var(--primary)',
           padding: '0.75rem 1rem',
           display: 'flex',

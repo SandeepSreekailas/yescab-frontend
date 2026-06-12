@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useGoogleSignIn, GoogleSignInButton } from './LoginPage'
 import { AlertTriangle, UserPlus } from 'lucide-react'
+import BrandLogo from '../components/BrandLogo'
 
 export default function RegisterPage() {
   const { register, googleLogin } = useAuth()
@@ -121,8 +122,7 @@ export default function RegisterPage() {
     <div className="auth-page">
       <div className="auth-card" style={{ maxWidth: '520px' }}>
         <div className="auth-logo">
-          <div className="auth-logo-icon">Y</div>
-          <span className="auth-logo-text">Yez<span>Cabs</span></span>
+          <BrandLogo size="lg" />
         </div>
 
         <h1 className="auth-title">Create your account</h1>

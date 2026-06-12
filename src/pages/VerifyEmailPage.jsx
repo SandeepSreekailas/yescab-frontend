@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { authAPI } from '../api/axios'
 import { useAuth } from '../context/AuthContext'
 import { CheckCircle, AlertTriangle } from 'lucide-react'
+import BrandLogo from '../components/BrandLogo'
 
 export default function VerifyEmailPage() {
   const [searchParams] = useSearchParams()
@@ -49,8 +50,7 @@ export default function VerifyEmailPage() {
     <div className="auth-page">
       <div className="auth-card" style={{ textAlign: 'center' }}>
         <div className="auth-logo">
-          <div className="auth-logo-icon">Y</div>
-          <span className="auth-logo-text">Yes<span>Cab</span></span>
+          <BrandLogo size="lg" />
         </div>
 
         <h1 className="auth-title">Email Verification</h1>

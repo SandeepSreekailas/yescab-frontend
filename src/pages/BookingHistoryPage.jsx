@@ -333,7 +333,7 @@ export default function BookingHistoryPage() {
 
                   {/* Admin Note */}
                   {b.admin_note && (
-                    <div style={{ marginTop: '0.85rem', padding: '0.75rem 1rem', background: 'rgba(255, 204, 0, 0.1)', borderRadius: 'var(--radius)', fontSize: '0.85rem', color: 'var(--text-muted)', borderLeft: '3px solid var(--primary)' }}>
+                    <div style={{ marginTop: '0.85rem', padding: '0.75rem 1rem', background: 'rgba(217, 255, 0, 0.1)', borderRadius: 'var(--radius)', fontSize: '0.85rem', color: 'var(--text-muted)', borderLeft: '3px solid var(--primary)' }}>
                       <span style={{ fontWeight: 600, color: 'var(--primary-dark)' }}>Admin Note: </span>
                       {b.admin_note}
                     </div>

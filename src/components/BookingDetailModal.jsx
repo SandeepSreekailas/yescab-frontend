@@ -286,7 +286,7 @@ export default function BookingDetailModal({ booking, vehicles = [], onClose, is
             {b.admin_note && (
               <div className="modal-detail-section">
                 <h4 className="modal-detail-heading" style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--primary-dark)' }}><FileText size={16} /> Admin Note</h4>
-                <p className="modal-detail-notes" style={{ background: 'rgba(255, 204, 0, 0.1)', borderLeft: '3px solid var(--primary)' }}>{b.admin_note}</p>
+                <p className="modal-detail-notes" style={{ background: 'rgba(217, 255, 0, 0.1)', borderLeft: '3px solid var(--primary)' }}>{b.admin_note}</p>
               </div>
             )}
             

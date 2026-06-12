@@ -1,13 +1,13 @@
 /* ═══════════════════════════════════════════════════════
    YezCabs — Global Styles
-   Palette: #FFCC00 (Primary) | #1D2D4B (Secondary)
+   Palette: #D9FF00 (Primary) | #1D2D4B (Secondary)
    ═══════════════════════════════════════════════════════ */
 
 /* ── Design Tokens ── */
 :root {
-  --primary: #ffcc00;
-  --primary-dark: #e6b800;
-  --primary-light: rgba(255, 204, 0, 0.12);
+  --primary: #D9FF00;
+  --primary-dark: #C4E600;
+  --primary-light: rgba(217, 255, 0, 0.15);
   --secondary: #1d2d4b;
   --secondary-light: #243659;
 
@@ -22,7 +22,7 @@
   --text-faint: #4f6480;
 
   --border: rgba(255, 255, 255, 0.07);
-  --border-active: rgba(255, 204, 0, 0.4);
+  --border-active: rgba(217, 255, 0, 0.4);
 
   --success: #22c55e;
   --warning: #f59e0b;
@@ -37,7 +37,7 @@
 
   --shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
   --shadow-lg: 0 8px 48px rgba(0, 0, 0, 0.45);
-  --shadow-primary: 0 0 32px rgba(255, 204, 0, 0.15);
+  --shadow-primary: 0 0 32px rgba(217, 255, 0, 0.15);
 
   --transition: 0.2s ease;
   --transition-slow: 0.35s ease;
@@ -149,7 +149,7 @@ h1, h2, h3, h4, h5, h6 {
 .btn-primary:hover:not(:disabled) {
   background: var(--primary-dark);
   transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(255, 204, 0, 0.35);
+  box-shadow: 0 4px 20px rgba(217, 255, 0, 0.35);
 }
 
 .btn-secondary {
@@ -271,7 +271,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .card:hover {
-  border-color: rgba(255, 204, 0, 0.15);
+  border-color: rgba(217, 255, 0, 0.15);
 }
 
 .card-glass {
@@ -428,6 +428,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 800;
   display: flex;
   align-items: center;
+  gap: 0.6rem;
   margin-bottom: 1.5rem;
   text-decoration: none;
 }
@@ -564,7 +565,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .stat-card:hover {
-  border-color: rgba(255, 204, 0, 0.2);
+  border-color: rgba(217, 255, 0, 0.2);
   transform: translateY(-2px);
 }
 
@@ -630,7 +631,7 @@ tbody tr:last-child td {
 }
 
 tbody tr:hover td {
-  background: rgba(255, 204, 0, 0.03);
+  background: rgba(217, 255, 0, 0.03);
 }
 
 /* ── Empty State ── */
@@ -769,7 +770,7 @@ tbody tr:hover td {
   align-items: center;
   justify-content: center;
   background: radial-gradient(ellipse at top left, rgba(29, 45, 75, 0.6) 0%, transparent 60%),
-              radial-gradient(ellipse at bottom right, rgba(255, 204, 0, 0.05) 0%, transparent 60%),
+              radial-gradient(ellipse at bottom right, rgba(217, 255, 0, 0.05) 0%, transparent 60%),
               var(--bg);
   padding: 2rem 1.5rem;
 }
@@ -788,27 +789,17 @@ tbody tr:hover td {
 .auth-logo {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  justify-content: center;
   margin-bottom: 2rem;
 }
 
+/* Legacy — kept for backward compat; prefer BrandLogo component */
 .auth-logo-icon {
-  width: 44px;
-  height: 44px;
-  background: var(--primary);
-  border-radius: var(--radius);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  color: #0b1527;
-  font-weight: 900;
+  display: none;
 }
 
 .auth-logo-text {
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: var(--text);
+  display: none;
 }
 
 .auth-logo-text span {
@@ -963,17 +954,9 @@ tbody tr:hover td {
   text-decoration: none;
 }
 
+/* navbar-logo is deprecated — handled by BrandLogo component */
 .navbar-logo {
-  width: 36px;
-  height: 36px;
-  background: var(--primary);
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  color: #0b1527;
-  font-size: 1rem;
+  display: none;
 }
 
 .navbar-name {
@@ -1133,6 +1116,106 @@ tbody tr:hover td {
   }
 }
 
+/* ═══════════════════════════════════════════════════════
+   BrandLogo Component — Reusable branding system
+   ═══════════════════════════════════════════════════════ */
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-logo__img {
+  object-fit: contain;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+}
+
+.brand-logo__text {
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.brand-logo__text span {
+  color: var(--primary);
+}
+
+/* ── Size: sm (footer, mobile drawer) ── */
+.brand-logo--sm .brand-logo__img {
+  height: 30px;
+  width: 30px;
+}
+.brand-logo--sm .brand-logo__text {
+  font-size: 1.15rem;
+}
+.brand-logo--sm {
+  gap: 6px;
+}
+
+/* ── Size: md (navbar, landing nav) ── */
+.brand-logo--md .brand-logo__img {
+  height: 35px;
+  width: 35px;
+}
+.brand-logo--md .brand-logo__text {
+  font-size: 1.35rem;
+}
+
+/* ── Size: lg (auth pages, about section) ── */
+.brand-logo--lg .brand-logo__img {
+  height: 35px;
+  width: 35px;
+}
+.brand-logo--lg .brand-logo__text {
+  font-size: 1.55rem;
+  font-weight: 800;
+}
+.brand-logo--lg {
+  gap: 8px;
+}
+
+/* ── Responsive: tablet ── */
+@media (max-width: 768px) {
+  .brand-logo--md .brand-logo__img {
+    height: 35px;
+    width: 35px;
+  }
+  .brand-logo--md .brand-logo__text {
+    font-size: 1.25rem;
+  }
+  .brand-logo--lg .brand-logo__img {
+    height: 35px;
+    width: 35px;
+  }
+  .brand-logo--lg .brand-logo__text {
+    font-size: 1.4rem;
+  }
+}
+
+/* ── Responsive: mobile ── */
+@media (max-width: 480px) {
+  .brand-logo--md .brand-logo__img {
+    height: 35px;
+    width: 35px;
+  }
+  .brand-logo--md .brand-logo__text {
+    font-size: 1.15rem;
+  }
+  .brand-logo--md {
+    gap: 6px;
+  }
+  .brand-logo--lg .brand-logo__img {
+    height: 35px;
+    width: 35px;
+  }
+  .brand-logo--lg .brand-logo__text {
+    font-size: 1.3rem;
+  }
+}
+
 /* ── Dashboard ── */
 .dashboard-hero {
   background: linear-gradient(135deg, var(--secondary) 0%, var(--bg-2) 100%);
@@ -1235,7 +1318,7 @@ tbody tr:hover td {
 }
 
 .booking-card:hover {
-  border-color: rgba(255, 204, 0, 0.2);
+  border-color: rgba(217, 255, 0, 0.2);
   transform: translateY(-1px);
 }
 
@@ -2320,11 +2403,11 @@ tbody tr:hover td {
 .receipt-note {
   margin-top: 1.5rem;
   padding: 1rem;
-  background: rgba(255, 204, 0, 0.05);
+  background: rgba(217, 255, 0, 0.05);
   border-radius: var(--radius);
   font-size: 0.85rem;
   color: var(--text-muted);
-  border: 1px solid rgba(255, 204, 0, 0.1);
+  border: 1px solid rgba(217, 255, 0, 0.1);
 }
 
 .receipt-actions {
@@ -2741,7 +2824,7 @@ tbody tr:hover td {
 
 .inline-timeline-dot.active {
   background: var(--primary);
-  box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.15);
+  box-shadow: 0 0 0 3px rgba(217, 255, 0, 0.15);
 }
 
 .inline-timeline-dot.terminal {
@@ -2835,3 +2918,4 @@ tbody tr:hover td {
     font-size: 0.78rem;
   }
 }
+

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import BrandLogo from '../components/BrandLogo'
 
 export default function PrivacyPolicyPage() {
   return (
@@ -14,10 +15,7 @@ export default function PrivacyPolicyPage() {
       >
         {/* Header */}
         <div className="auth-logo" style={{ marginBottom: '1.5rem' }}>
-          <div className="auth-logo-icon">Y</div>
-          <span className="auth-logo-text">
-            Yez<span>Cabs</span>
-          </span>
+          <BrandLogo size="lg" />
         </div>
 
         <h1 className="auth-title" style={{ marginBottom: '0.25rem' }}>Privacy Policy</h1>

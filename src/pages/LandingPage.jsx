@@ -89,17 +89,17 @@ const FEATURES = [
 
 const STEPS = [
   {
-    icon: <UserPlus size={28} color="var(--primary)" />,
+    icon: <UserPlus size={28} />,
     title: 'Create Account',
     desc: 'Register with email or sign in with Google. Verify your email to get started.',
   },
   {
-    icon: <MapPin size={28} color="var(--primary)" />,
+    icon: <MapPin size={28} />,
     title: 'Book Your Ride',
     desc: 'Pick your locations on the map, choose date & time, and submit your booking.',
   },
   {
-    icon: <CheckCircle size={28} color="var(--primary)" />,
+    icon: <CheckCircle size={28} />,
     title: 'Ride Confirmed',
     desc: 'Admin reviews and approves your booking. Get notified via email and WhatsApp.',
   },

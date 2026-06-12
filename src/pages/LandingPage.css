@@ -376,13 +376,20 @@
   transition: all var(--transition-slow);
 }
 
+.lp-step-number svg {
+  color: var(--primary);
+  stroke: var(--primary);
+  transition: all var(--transition-slow);
+}
+
 .lp-step:hover .lp-step-number {
   background: var(--primary);
   box-shadow: 0 0 40px rgba(217, 255, 0, 0.2);
 }
 
 .lp-step:hover .lp-step-number svg {
-  color: var(--secondary) !important;
+  color: #000000 !important;
+  stroke: #000000 !important;
 }
 
 .lp-step-title {

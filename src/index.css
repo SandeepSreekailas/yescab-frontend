@@ -2469,6 +2469,11 @@ tbody tr:hover td {
     color: #1a1a1a !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
   /* ── 4. Portal wrapper — remove overlay appearance ── */
@@ -2482,6 +2487,9 @@ tbody tr:hover td {
     z-index: auto !important;
     animation: none !important;
     overflow: visible !important;
+    height: auto !important;
+    min-height: auto !important;
+    margin: 0 !important;
   }
 
   /* ── 5. Receipt card — white background, no constraints ── */
@@ -2502,6 +2510,8 @@ tbody tr:hover td {
     flex-direction: unset !important;
     background: #fff !important;
     color: #1a1a1a !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
   }
 
   /* ── 6. Force all receipt text to dark on white ── */
@@ -2690,8 +2700,6 @@ tbody tr:hover td {
   }
 
   /* ── 17. Prevent page breaks inside sections ── */
-  .receipt-modal,
-  .receipt-body,
   .receipt-grid,
   .receipt-route,
   .receipt-footer-info,
